@@ -70,6 +70,7 @@ class Report {
                    ru.can_sell,
                    ru.can_buy,
                    ru.suspended_until,
+                   ru.is_blocked,  -- Thêm cột is_blocked vào đây
                    re.username as reporter_username,
                    b.title as book_title,
                    b.author as book_author,
@@ -256,6 +257,22 @@ class Report {
         ');
         $this->db->bind(1, $adminId);
         $this->db->bind(2, $adminNote);
+        $this->db->bind(3, $reportId);
+        
+        return $this->db->execute();
+    }
+
+    // Cập nhật trạng thái báo cáo
+    public function updateReportStatus($reportId, $status, $adminId) {
+        $this->db->query('
+            UPDATE user_reports 
+            SET status = ?, 
+                admin_id = ?, 
+                updated_at = NOW() 
+            WHERE id = ?
+        ');
+        $this->db->bind(1, $status);
+        $this->db->bind(2, $adminId);
         $this->db->bind(3, $reportId);
         
         return $this->db->execute();

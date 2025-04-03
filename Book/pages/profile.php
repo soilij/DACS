@@ -273,13 +273,19 @@ require_once '../includes/header.php';
                         <i class="fas fa-clock me-2"></i> Tham gia từ <?php echo date('d/m/Y', strtotime($profile_user['created_at'])); ?>
                     </p>
                 </div>
-                <!-- Thêm nút báo cáo dưới thông tin profile -->
-                <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != $profile_user['id']): ?>
+               <!-- Thêm các dòng debug này ngay trước nút báo cáo -->
+               <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != $profile_user['id']): ?>
                 <div class="text-center mt-3">
-                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#reportUserModal">
+                    <button type="button" class="btn btn-outline-danger btn-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#reportUserModal" 
+                            onclick="console.log('Session User ID: ', <?php echo $_SESSION['user_id']; ?>); 
+                                    console.log('Profile User ID: ', <?php echo $profile_user['id']; ?>);">
                         <i class="fas fa-flag me-1"></i> Báo cáo người dùng
                     </button>
-                </div>
+                    </div>
+                <?php else: ?>
+                    <!-- Debug info -->
                 <?php endif; ?>
             </div>
         </div>
@@ -523,13 +529,14 @@ require_once '../includes/header.php';
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <!-- Modal Báo cáo người dùng -->
 <div class="modal fade" id="reportUserModal" tabindex="-1" aria-labelledby="reportUserModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="post" action="../pages/report_user.php">
-                <input type="hidden" name="reported_user_id" value="<?php echo $user_info['id']; ?>">
+                <input type="hidden" name="reported_user_id" value="<?php echo $profile_user['id']; ?>">
                 <div class="modal-header">
                     <h5 class="modal-title" id="reportUserModalLabel">Báo cáo người dùng</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -560,26 +567,29 @@ require_once '../includes/header.php';
         </div>
     </div>
 </div>
-<?php endif; ?>
 
 <script>
     function previewImage(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
-            
             reader.onload = function(e) {
                 document.getElementById('imagePreview').src = e.target.result;
             }
-            
             reader.readAsDataURL(input.files[0]);
         }
     }
-    <?php if (isset($password_error) && !empty($password_error)): ?>
-    document.addEventListener('DOMContentLoaded', function() {
-        var passwordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
-        passwordModal.show();
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var reportModal = document.getElementById("reportUserModal");
+        if (reportModal) {
+            reportModal.addEventListener("show.bs.modal", function (event) {
+                console.log("Report modal is shown");
+            });
+        } else {
+            console.log("Report modal not found");
+        }
     });
-    <?php endif; ?>
+
 </script>
 
 <?php
