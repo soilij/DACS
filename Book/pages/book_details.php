@@ -219,7 +219,7 @@ require_once '../includes/header.php';
                                 <?php else: ?>
                                     <span class="position-absolute top-0 start-0 badge bg-secondary m-2">Đã trao đổi</span>
                                 <?php endif; ?>
-                                
+                              
                                 <!-- Thêm vào wishlist -->
                                 <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != $book_info['user_id']): ?>
                                 <form method="post" action="" class="position-absolute top-0 end-0 m-2">
@@ -301,6 +301,14 @@ require_once '../includes/header.php';
                             <?php endif; ?>
                         </div>
                     </div>
+                    <!-- Thêm nút báo cáo ở dưới thông tin sách -->
+                    <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != $book_info['user_id']): ?>
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#reportBookModal">
+                            <i class="fas fa-flag me-1"></i> Báo cáo sách này
+                        </button>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
             
@@ -504,6 +512,42 @@ require_once '../includes/header.php';
                     <button type="submit" name="process_payment" id="process_payment" class="btn btn-success" disabled>
                         <i class="fas fa-shopping-cart me-1"></i> Tiếp tục
                     </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Báo cáo sách -->
+<div class="modal fade" id="reportBookModal" tabindex="-1" aria-labelledby="reportBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="../pages/report_user.php">
+                <input type="hidden" name="reported_user_id" value="<?php echo $book_info['user_id']; ?>">
+                <input type="hidden" name="book_id" value="<?php echo $book_info['id']; ?>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportBookModalLabel">Báo cáo sách</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="report_type" class="form-label">Loại báo cáo</label>
+                        <select class="form-select" id="report_type" name="report_type" required>
+                            <option value="">-- Chọn loại báo cáo --</option>
+                            <option value="inappropriate_content">Nội dung không phù hợp</option>
+                            <option value="fake_book">Sách giả/Sách không đúng mô tả</option>
+                            <option value="spam">Spam/Quảng cáo</option>
+                            <option value="other">Khác</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                    <label for="report_reason" class="form-label">Lý do báo cáo</label>
+                    <textarea class="form-control" id="report_reason" name="report_reason" rows="4" required placeholder="Mô tả chi tiết lý do báo cáo..."></textarea>
+                    </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" name="report_user" class="btn btn-danger">Gửi báo cáo</button>
                 </div>
             </form>
         </div>

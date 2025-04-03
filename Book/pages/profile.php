@@ -34,6 +34,7 @@ $profile_user = $user->getUserById($profile_id);
 
 if (!$profile_user) {
     // Người dùng không tồn tại, chuyển hướng về trang chủ
+    $_SESSION['error'] = 'Không tìm thấy thông tin người dùng!';
     header('Location: ../index.php');
     exit();
 }
@@ -195,6 +196,7 @@ require_once '../includes/header.php';
                             <i class="fas fa-user-plus me-1"></i> Theo dõi
                         </button>
                         <?php endif; ?>
+                        
                     </form>
                     <?php else: ?>
                     <div class="d-flex gap-2">
@@ -271,6 +273,14 @@ require_once '../includes/header.php';
                         <i class="fas fa-clock me-2"></i> Tham gia từ <?php echo date('d/m/Y', strtotime($profile_user['created_at'])); ?>
                     </p>
                 </div>
+                <!-- Thêm nút báo cáo dưới thông tin profile -->
+                <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != $profile_user['id']): ?>
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#reportUserModal">
+                        <i class="fas fa-flag me-1"></i> Báo cáo người dùng
+                    </button>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -508,6 +518,43 @@ require_once '../includes/header.php';
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                     <button type="submit" name="update_password" class="btn btn-primary">Cập nhật mật khẩu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Báo cáo người dùng -->
+<div class="modal fade" id="reportUserModal" tabindex="-1" aria-labelledby="reportUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="../pages/report_user.php">
+                <input type="hidden" name="reported_user_id" value="<?php echo $user_info['id']; ?>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportUserModalLabel">Báo cáo người dùng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="report_type" class="form-label">Loại báo cáo</label>
+                        <select class="form-select" id="report_type" name="report_type" required>
+                            <option value="">-- Chọn loại báo cáo --</option>
+                            <option value="spam">Spam</option>
+                            <option value="inappropriate_content">Nội dung không phù hợp</option>
+                            <option value="fake_book">Sách giả</option>
+                            <option value="scam">Lừa đảo</option>
+                            <option value="harassment">Quấy rối</option>
+                            <option value="other">Khác</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="report_reason" class="form-label">Lý do báo cáo</label>
+                        <textarea class="form-control" id="report_reason" name="report_reason" rows="4" required placeholder="Mô tả chi tiết lý do báo cáo..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" name="report_user" class="btn btn-danger">Gửi báo cáo</button>
                 </div>
             </form>
         </div>

@@ -43,6 +43,20 @@ if (!isset($_SESSION['user_id']) || $_SESSION['is_admin'] != 1) {
                         <i class="fas fa-users me-2"></i> Quản lý người dùng
                     </a>
                 </li>
+                <li class="<?php echo basename($_SERVER['PHP_SELF']) == 'reports_list.php' ? 'active' : ''; ?>">
+                    <a href="reports_list.php" class="text-decoration-none px-4 py-3 d-block">
+                        <i class="fas fa-flag me-2"></i> Quản lý báo cáo
+                        <?php 
+                        // Hiển thị badge nếu có báo cáo chờ xử lý
+                        if (class_exists('Report')) {
+                            $pendingReports = (new Report())->getPendingReportsCount();
+                            if ($pendingReports > 0) {
+                                echo '<span class="badge bg-danger ms-2">' . $pendingReports . '</span>';
+                            }
+                        }
+                        ?>
+                    </a>
+                </li>
                 <li class="<?php echo basename($_SERVER['PHP_SELF']) == 'books.php' ? 'active' : ''; ?>">
                     <a href="books.php" class="text-decoration-none px-4 py-3 d-block">
                         <i class="fas fa-book me-2"></i> Quản lý sách

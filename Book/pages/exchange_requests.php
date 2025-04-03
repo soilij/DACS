@@ -83,6 +83,37 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     }
 }
 
+// Đặt code này sau phần kiểm tra đăng nhập và trước khi xử lý yêu cầu trao đổi
+if (isset($_SESSION['user_id'])) {
+    // Kiểm tra người dùng có bị khóa hoặc bị hạn chế không
+    $user_id = $_SESSION['user_id'];
+    $db = new Database();
+    $db->query('SELECT can_buy, can_sell, suspended_until, is_blocked FROM users WHERE id = ?');
+    $db->bind(1, $user_id);
+    $user_status = $db->single();
+
+    // Nếu tài khoản bị khóa
+    if ($user_status['is_blocked']) {
+        $_SESSION['error'] = 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.';
+        header('Location: index.php');
+        exit();
+    }
+
+    // Nếu tài khoản bị tạm khóa
+    if ($user_status['suspended_until'] && strtotime($user_status['suspended_until']) > time()) {
+        $_SESSION['error'] = 'Tài khoản của bạn đang bị tạm khóa đến ' . date('d/m/Y H:i', strtotime($user_status['suspended_until'])) . '. Vui lòng thử lại sau.';
+        header('Location: index.php');
+        exit();
+    }
+
+    // Kiểm tra quyền trao đổi sách
+    if (!$user_status['can_sell']) {
+        $_SESSION['error'] = 'Tài khoản của bạn đã bị hạn chế quyền trao đổi sách. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.';
+        header('Location: index.php');
+        exit();
+    }
+}
+
 // Xử lý đánh giá
 if (isset($_POST['submit_review'])) {
     $exchange_id = $_POST['exchange_id'];
