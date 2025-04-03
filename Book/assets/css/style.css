@@ -1,0 +1,314 @@
+/* Các biến CSS */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #27ae60;
+    --accent-color: #e74c3c;
+    --light-color: #ecf0f1;
+    --dark-color: #2c3e50;
+    --text-color: #333;
+    --gray-color: #95a5a6;
+    --success-color: #27ae60;
+    --info-color: #3498db;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
+}
+
+/* Reset và Base */
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+a {
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: var(--secondary-color);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #1a252f;
+    border-color: #1a252f;
+}
+
+.btn-success {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-success:hover {
+    background-color: #219a52;
+    border-color: #219a52;
+}
+
+/* Header Styles */
+.top-banner {
+    background-color: var(--primary-color);
+}
+
+header {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+header .nav-link {
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
+
+header .nav-link:hover {
+    color: var(--secondary-color);
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/pattern.png');
+    opacity: 0.05;
+    z-index: 0;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Book Cards */
+.book-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.book-card img {
+    transition: transform 0.5s ease;
+}
+
+.book-card:hover img {
+    transform: scale(1.03);
+}
+
+.book-card .card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.book-card .toggle-wishlist {
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.book-card:hover .toggle-wishlist {
+    opacity: 1;
+}
+
+.book-card .toggle-wishlist:hover {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.book-card .toggle-wishlist.active i {
+    font-weight: 900;
+    color: var(--accent-color);
+}
+
+/* Category Cards */
+.featured-categories .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.featured-categories .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* About Platform Section */
+.about-platform .fa-check-circle {
+    color: var(--secondary-color);
+}
+
+/* Footer */
+footer {
+    background-color: #f8f9fa;
+}
+
+footer h5 {
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+}
+
+footer a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: var(--secondary-color);
+}
+
+/* Newsletter Section */
+.newsletter-section {
+    background-color: var(--primary-color);
+}
+
+/* Login & Register Forms */
+.auth-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.auth-container h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Profile Page */
+.profile-header {
+    background-color: var(--light-color);
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.rating-stars .fas, .rating-stars .far {
+    color: #f39c12;
+}
+
+/* Book Details Page */
+.book-details-image {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.book-owner-card {
+    border-radius: 10px;
+    border: 1px solid #eee;
+    padding: 1rem;
+}
+
+.owner-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Search Page */
+.filter-sidebar {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+/* Exchange Request */
+.exchange-card {
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.exchange-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Reviews */
+.review-card {
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #eee;
+}
+
+.reviewer-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+    }
+    
+    .profile-header {
+        text-align: center;
+    }
+    
+    .profile-image {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Utility Classes */
+.bg-light-gray {
+    background-color: #f8f9fa;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.text-secondary {
+    color: var(--secondary-color) !important;
+}
+
+.rounded-lg {
+    border-radius: 10px !important;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.shadow-hover:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}

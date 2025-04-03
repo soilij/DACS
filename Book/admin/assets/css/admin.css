@@ -1,0 +1,211 @@
+/* Admin Dashboard Styles */
+
+/* Sidebar */
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+#sidebar .sidebar-header {
+    background: #1a1a27;
+}
+
+#sidebar ul.components {
+    padding: 0;
+    border-bottom: 1px solid #47748b;
+}
+
+#sidebar ul li {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#sidebar ul li a {
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s;
+}
+
+#sidebar ul li a:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#sidebar ul li.active a {
+    color: #fff;
+    background: #4e73df;
+}
+
+#sidebar ul li.active a i {
+    color: #fff;
+}
+
+/* Content */
+#content {
+    width: 100%;
+    min-height: 100vh;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Card Styles */
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.card-header h6 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #4e73df;
+}
+
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+
+.border-left-danger {
+    border-left: 0.25rem solid #e74a3b !important;
+}
+
+/* Charts */
+.chart-area {
+    position: relative;
+    height: 20rem;
+}
+
+.chart-pie {
+    position: relative;
+    height: 15rem;
+}
+
+/* Tables */
+.table thead th {
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #5a5c69;
+    background-color: #f8f9fc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    
+    #sidebar.active {
+        margin-left: 0;
+    }
+    
+    #sidebarCollapse span {
+        display: none;
+    }
+}
+
+/* Buttons */
+.btn-circle {
+    border-radius: 100%;
+    height: 2.5rem;
+    width: 2.5rem;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-circle.btn-sm {
+    height: 1.8rem;
+    width: 1.8rem;
+    font-size: 0.75rem;
+}
+
+.btn-circle.btn-lg {
+    height: 3.5rem;
+    width: 3.5rem;
+    font-size: 1.35rem;
+}
+
+/* Page Heading */
+.h3 {
+    font-weight: 700;
+    color: #5a5c69;
+}
+
+/* Footer */
+footer {
+    font-size: 0.85rem;
+    color: #858796;
+}
+
+/* Form Controls */
+.form-control:focus {
+    border-color: #bac8f3;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+/* DataTables */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border-radius: 0.35rem;
+    margin: 0 0.1rem;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.85rem;
+    border: 1px solid #e3e6f0;
+    color: #5a5c69 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: #4e73df;
+    color: white !important;
+    border-color: #4e73df;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #f8f9fc;
+    color: #4e73df !important;
+    border-color: #bac8f3;
+}
+
+/* Badges */
+.badge {
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 0.35rem;
+    font-size: 0.9rem;
+}
+
+/* Custom Classes */
+.text-gray-800 {
+    color: #5a5c69 !important;
+}
+
+.text-gray-300 {
+    color: #dddfeb !important;
+}
+
+.text-xs {
+    font-size: 0.7rem;
+}

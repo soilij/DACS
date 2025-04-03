@@ -1,0 +1,21 @@
+# Enable rewrite engine
+RewriteEngine On
+RewriteBase /
+
+# Don't rewrite files or directories that exist
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Rewrite URLs to SEO friendly format
+# Book details page
+RewriteRule ^book/([0-9]+)/([a-zA-Z0-9-]+)$ pages/book_details.php?id=$1 [L,QSA]
+
+# Category page
+RewriteRule ^category/([0-9]+)/([a-zA-Z0-9-]+)$ pages/category.php?id=$1 [L,QSA]
+
+# User profile page
+RewriteRule ^user/([0-9]+)/([a-zA-Z0-9-]+)$ pages/profile.php?id=$1 [L,QSA]
+
+# Custom error pages
+ErrorDocument 404 /pages/error/404.php
+ErrorDocument 500 /pages/error/500.php
