@@ -94,4 +94,13 @@ class Database {
     public function cancelTransaction() {
         return $this->conn->rollBack();
     }
+
+        // Thêm vào lớp Database
+    public function commit() {
+        return $this->conn->commit();
+    }
+
+    public function rollBack() {
+        return $this->conn->rollBack();
+    }
 }

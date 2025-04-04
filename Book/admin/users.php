@@ -123,6 +123,28 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                 }
                 break;
                 
+                case 'unsuspend':
+                    // Mở khóa tài khoản đang bị tạm khóa
+                    $db->query('UPDATE users SET suspended_until = NULL WHERE id = :id');
+                    $db->bind(':id', $user_id);
+                    
+                    if ($db->execute()) {
+                        $message = 'Đã mở khóa tài khoản thành công!';
+                        $message_type = 'success';
+                        
+                        // Gửi thông báo cho người dùng
+                        $notification_data = [
+                            'user_id' => $user_id,
+                            'message' => 'Tài khoản của bạn đã được mở khóa sớm hơn thời hạn ban đầu.',
+                            'link' => 'profile.php'
+                        ];
+                        $notification->create($notification_data);
+                    } else {
+                        $message = 'Có lỗi xảy ra khi mở khóa tài khoản!';
+                        $message_type = 'danger';
+                    }
+                    break;
+                    
             case 'delete':
                 // Xóa tài khoản
                 // Lưu ý: Cần cẩn thận khi xóa tài khoản vì sẽ ảnh hưởng đến dữ liệu liên quan
@@ -276,6 +298,12 @@ include('includes/header.php');
                             <td>
                                 <?php if($user['is_blocked'] == 1): ?>
                                     <span class="badge bg-danger">Đã khóa</span>
+                                <?php elseif($user['suspended_until'] && strtotime($user['suspended_until']) > time()): ?>
+                                    <span class="badge bg-warning">Tạm khóa đến <?php echo date('d/m/Y H:i', strtotime($user['suspended_until'])); ?></span>
+                                    <!-- Thêm nút mở khóa -->
+                                    <a href="?action=unsuspend&id=<?php echo $user['id']; ?>" class="btn btn-sm btn-success ms-2" onclick="return confirm('Bạn có chắc chắn muốn mở khóa tài khoản này sớm hơn?');">
+                                        <i class="fas fa-unlock"></i> Mở khóa sớm
+                                    </a>
                                 <?php else: ?>
                                     <span class="badge bg-success">Đang hoạt động</span>
                                 <?php endif; ?>

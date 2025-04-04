@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         // TODO: Xử lý gửi email hoặc lưu vào cơ sở dữ liệu
         // Ví dụ đơn giản:
-        $to = 'contact@bookswap.vn'; // Địa chỉ email của BookSwap
+        $to = 'nguyenminhhhuy2002cm@gmail.com'; // Địa chỉ email của BookSwap
         $email_subject = "Liên hệ từ: $name - $subject";
         $email_body = "Bạn nhận được một tin nhắn mới từ trang liên hệ BookSwap.\n\n" .
                       "Chi tiết liên hệ:\n" .

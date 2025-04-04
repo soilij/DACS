@@ -61,7 +61,7 @@
                     <h5 class="mb-3">Khám phá</h5>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Về chúng tôi</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Cách thức hoạt động</a></li>
+                        <li class="mb-2"> <a class="nav-link" href="<?php echo isset($is_detail_page) && $is_detail_page ? 'how_it_works.php' : 'pages/how_it_works.php'; ?>">Cách thức hoạt động</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Câu hỏi thường gặp</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Điều khoản sử dụng</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Chính sách bảo mật</a></li>
@@ -74,9 +74,9 @@
                 <div class="col-lg-3 mb-4">
                     <h5 class="mb-3">Tài khoản của tôi</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Hồ sơ cá nhân</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Sách của tôi</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Sách yêu thích</a></li>
+                        <li><a class="dropdown-item" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/profile.php' : 'pages/profile.php'; ?>">Hồ sơ cá nhân</a></li>
+                        <li><a class="dropdown-item" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/my_books.php' : 'pages/my_books.php'; ?>">Sách của tôi</a></li>
+                        <li><a class="dropdown-item" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/exchange_requests.php' : 'pages/exchange_requests.php'; ?>">Yêu cầu trao đổi</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Yêu cầu trao đổi</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Lịch sử trao đổi</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none text-dark">Đánh giá</a></li>

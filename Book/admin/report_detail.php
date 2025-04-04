@@ -36,7 +36,32 @@ if (!$report_info) {
     header('Location: reports_list.php');
     exit();
 }
-
+if (isset($_POST['action']) && $_POST['action'] == 'unsuspend') {
+    $db = new Database();
+    $db->query('UPDATE users SET suspended_until = NULL WHERE id = :id');
+    $db->bind(':id', $report_info['reported_user_id']);
+    
+    if ($db->execute()) {
+        // Tạo thông báo cho người dùng
+        $notification = new Notification();
+        $notificationData = [
+            'user_id' => $report_info['reported_user_id'],
+            'message' => 'Tài khoản của bạn đã được mở khóa sớm hơn thời hạn ban đầu.',
+            'link' => 'pages/profile.php'
+        ];
+        $notification->create($notificationData);
+        
+        $message = 'Đã mở khóa tài khoản thành công!';
+        $message_type = 'success';
+        
+        // Refresh để hiển thị thông tin mới
+        header('Location: report_detail.php?id=' . $report_id . '&message=' . urlencode($message) . '&type=' . $message_type);
+        exit();
+    } else {
+        $message = 'Có lỗi xảy ra khi mở khóa tài khoản!';
+        $message_type = 'danger';
+    }
+}
 // Đánh dấu báo cáo là đã xem xét nếu đang ở trạng thái chờ xử lý
 if ($report_info['status'] == 'pending') {
     $report->updateReportStatus($report_id, 'reviewed', $_SESSION['user_id']);
@@ -313,6 +338,17 @@ include('includes/header.php');
                                                 <span class="badge bg-success">Giải quyết</span>
                                             <?php else: ?>
                                                 <span class="badge bg-secondary">Từ chối</span>
+                                            <?php endif; ?>
+                                            <?php if($report_info['suspended_until'] && strtotime($report_info['suspended_until']) > time()): ?>
+                                            <div class="alert alert-warning">
+                                                Tài khoản đang bị tạm khóa đến <?php echo date('d/m/Y H:i', strtotime($report_info['suspended_until'])); ?>
+                                                <form method="post" action="" class="mt-2">
+                                                    <button type="submit" name="action" value="unsuspend" class="btn btn-success btn-sm"
+                                                        onclick="return confirm('Bạn có chắc chắn muốn mở khóa tài khoản này sớm hơn?');">
+                                                        <i class="fas fa-unlock me-1"></i> Mở khóa sớm
+                                                    </button>
+                                                </form>
+                                            </div>
                                             <?php endif; ?>
                                         </td>
                                         <td><?php echo date('d/m/Y', strtotime($r['created_at'])); ?></td>
