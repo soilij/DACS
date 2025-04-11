@@ -129,9 +129,9 @@ $database = new Database();
                                                 foreach($notifications as $n):
                                             ?>
                                             <li>
-                                                <a class="dropdown-item notification-item <?php echo $n['is_read'] ? 'read' : 'unread'; ?>" 
-                                                href="<?php echo $n['link']; ?>" 
-                                                data-notification-id="<?php echo $n['id']; ?>">
+                                            <a class="dropdown-item notification-item <?php echo $n['is_read'] ? 'read' : 'unread'; ?>" 
+                                            href="<?php echo isset($is_detail_page) && $is_detail_page ? '../' . $n['link'] : $n['link']; ?>" 
+                                            data-notification-id="<?php echo $n['id']; ?>">
                                                     <?php echo $n['message']; ?>
                                                     <div class="small text-muted"><?php echo date('d/m/Y H:i', strtotime($n['created_at'])); ?></div>
                                                 </a>

@@ -2,6 +2,9 @@
 // Thiết lập biến
 $is_detail_page = true;
 
+// Include file Mailer để sử dụng chức năng gửi mail
+require_once '../classes/Mailer.php';
+
 // Xử lý form liên hệ
 $msg = '';
 $msg_type = '';
@@ -35,32 +38,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Nếu không có lỗi
     if (empty($errors)) {
-        // TODO: Xử lý gửi email hoặc lưu vào cơ sở dữ liệu
-        // Ví dụ đơn giản:
-        $to = 'nguyenminhhhuy2002cm@gmail.com'; // Địa chỉ email của BookSwap
-        $email_subject = "Liên hệ từ: $name - $subject";
-        $email_body = "Bạn nhận được một tin nhắn mới từ trang liên hệ BookSwap.\n\n" .
-                      "Chi tiết liên hệ:\n" .
-                      "Họ và tên: $name\n" .
-                      "Email: $email\n" .
-                      "Số điện thoại: $phone\n\n" .
-                      "Chủ đề: $subject\n\n" .
-                      "Nội dung tin nhắn:\n$message";
-        
-        // Thêm header để gửi email
-        $headers = "From: $email\r\n";
-        $headers .= "Reply-To: $email\r\n";
-        $headers .= "X-Mailer: PHP/" . phpversion();
-
-        // Gửi email (chú ý: cấu hình mail server)
-        if (mail($to, $email_subject, $email_body, $headers)) {
-            $msg = 'Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!';
-            $msg_type = 'success';
-            
-            // Reset form
-            $name = $email = $phone = $subject = $message = '';
-        } else {
-            $msg = 'Có lỗi xảy ra khi gửi tin nhắn. Vui lòng thử lại sau.';
+        // Sử dụng phương thức sendContactForm để gửi email
+        try {
+            if (Mailer::sendContactForm($name, $email, $phone, $subject, $message)) {
+                $msg = 'Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!';
+                $msg_type = 'success';
+                
+                // Reset form
+                $name = $email = $phone = $subject = $message = '';
+            } else {
+                $msg = 'Có lỗi xảy ra khi gửi tin nhắn. Vui lòng thử lại sau hoặc liên hệ qua số điện thoại.';
+                $msg_type = 'danger';
+            }
+        } catch (Exception $e) {
+            $msg = 'Có lỗi xảy ra: ' . $e->getMessage();
             $msg_type = 'danger';
         }
     } else {
@@ -113,11 +104,11 @@ require_once '../includes/header.php';
                             <label for="subject" class="form-label">Chủ đề <span class="text-danger">*</span></label>
                             <select class="form-select" id="subject" name="subject" required>
                                 <option value="">Chọn chủ đề</option>
-                                <option value="Hỗ trợ kỹ thuật">Hỗ trợ kỹ thuật</option>
-                                <option value="Góp ý và báo lỗi">Góp ý và báo lỗi</option>
-                                <option value="Câu hỏi về trao đổi sách">Câu hỏi về trao đổi sách</option>
-                                <option value="Hợp tác">Hợp tác</option>
-                                <option value="Khác">Khác</option>
+                                <option value="Hỗ trợ kỹ thuật" <?php echo ($subject ?? '') == 'Hỗ trợ kỹ thuật' ? 'selected' : ''; ?>>Hỗ trợ kỹ thuật</option>
+                                <option value="Góp ý và báo lỗi" <?php echo ($subject ?? '') == 'Góp ý và báo lỗi' ? 'selected' : ''; ?>>Góp ý và báo lỗi</option>
+                                <option value="Câu hỏi về trao đổi sách" <?php echo ($subject ?? '') == 'Câu hỏi về trao đổi sách' ? 'selected' : ''; ?>>Câu hỏi về trao đổi sách</option>
+                                <option value="Hợp tác" <?php echo ($subject ?? '') == 'Hợp tác' ? 'selected' : ''; ?>>Hợp tác</option>
+                                <option value="Khác" <?php echo ($subject ?? '') == 'Khác' ? 'selected' : ''; ?>>Khác</option>
                             </select>
                         </div>
 
@@ -196,11 +187,8 @@ require_once '../includes/header.php';
 require_once '../includes/footer.php';
 ?>
 
-<!-- Thêm script Google Maps vào cuối file, ngay trước thẻ đóng body -->
 <script>
 // Script chỉ cho validate số điện thoại
-
-// Validate số điện thoại
 document.addEventListener('DOMContentLoaded', function() {
     const phoneInput = document.getElementById('phone');
     if (phoneInput) {
@@ -211,8 +199,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-
-<!-- Không cần tải Google Maps API nữa vì đã dùng iframe -->
 
 <style>
 .form-label span.text-danger {
