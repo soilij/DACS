@@ -461,62 +461,34 @@ require_once '../includes/header.php';
 <div class="modal fade" id="buyModal" tabindex="-1" aria-labelledby="buyModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="buyModalLabel">Xác Nhận Mua Sách</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header">
+                <h5 class="modal-title" id="buyModalLabel">Xác Nhận Mua Sách</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <img src="../uploads/books/<?php echo $book_info['image']; ?>" alt="<?php echo $book_info['title']; ?>" class="img-thumbnail mb-3" style="max-height: 150px;">
+                    <h5><?php echo $book_info['title']; ?></h5>
+                    <p class="text-muted"><?php echo $book_info['author']; ?></p>
+                    <h4 class="text-primary"><?php echo number_format($book_info['price'], 0, ',', '.'); ?> đ</h4>
                 </div>
-                <div class="modal-body">
-                    <div class="text-center mb-4">
-                        <img src="../uploads/books/<?php echo $book_info['image']; ?>" alt="<?php echo $book_info['title']; ?>" class="img-thumbnail mb-3" style="max-height: 150px;">
-                        <h5><?php echo $book_info['title']; ?></h5>
-                        <p class="text-muted"><?php echo $book_info['author']; ?></p>
-                        <h4 class="text-primary"><?php echo number_format($book_info['price'], 0, ',', '.'); ?> đ</h4>
-                    </div>
-                    
-                    <div class="alert alert-info">
-                        <p class="mb-0">
-                            <i class="fas fa-info-circle me-2"></i> Chọn phương thức thanh toán
-                        </p>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Phương thức thanh toán</label>
-                        <div class="row g-2">
-                            <div class="col-4">
-                                <input type="radio" class="btn-check" name="payment_method" id="momo" value="momo" required>
-                                <label class="btn btn-outline-primary w-100" for="momo">
-                                <i class="fas fa-wallet fa-2x text-danger mb-1"></i>
-                                <div class="small">MoMo</div>
-                                </label>
-                            </div>
-                            <div class="col-4">
-                                <input type="radio" class="btn-check" name="payment_method" id="bank_transfer" value="bank_transfer">
-                                <label class="btn btn-outline-primary w-100" for="bank_transfer">
-                                    <i class="fas fa-university fa-2x mb-1"></i>
-                                    <div class="small">Chuyển khoản</div>
-                                </label>
-                            </div>
-                            <div class="col-4">
-                                <input type="radio" class="btn-check" name="payment_method" id="cod" value="cod">
-                                <label class="btn btn-outline-primary w-100" for="cod">
-                                    <i class="fas fa-money-bill-wave fa-2x mb-1"></i>
-                                    <div class="small">Thanh toán sau</div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                
+                <div class="alert alert-info">
+                    <p class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i> Bạn muốn tiếp tục mua sách này?
+                    </p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" name="process_payment" id="process_payment" class="btn btn-success" disabled>
-                        <i class="fas fa-shopping-cart me-1"></i> Tiếp tục
-                    </button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <a href="payment.php?book_id=<?php echo $book_info['id']; ?>" class="btn btn-success">
+                    <i class="fas fa-shopping-cart me-1"></i> Tiếp tục
+                </a>
+            </div>
         </div>
     </div>
 </div>
+
 
 <!-- Modal Báo cáo sách -->
 <div class="modal fade" id="reportBookModal" tabindex="-1" aria-labelledby="reportBookModalLabel" aria-hidden="true">
