@@ -2,6 +2,7 @@
 // Include header
 require_once 'includes/header.php';
 require_once 'classes/Category.php';
+require_once 'includes/footer.php';
 
 // Khởi tạo Book class
 $book = new Book();
@@ -16,6 +17,8 @@ $popular_books = $book->getPopular(5);
 $category = new Category();
 $featured_categories = $category->getFeatured();
 ?>
+<!-- Include Chatbot -->
+<?php require_once 'includes/chatbot_include.php'; ?>
 
 <!-- Hero Section / Slider -->
 <section class="hero-section position-relative bg-light mb-5">
