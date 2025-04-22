@@ -5,7 +5,7 @@
     </div>
     <div class="chatbot-box" id="chatbotBox">
         <div class="chatbot-header">
-            <h5 class="mb-0">BookSwap Assistant</h5>
+            <h5 class="mb-0">BookSwap</h5>
             <button class="close-btn" id="closeChatbot"><i class="fas fa-times"></i></button>
         </div>
         <div class="chatbot-body" id="chatbotBody">
@@ -246,6 +246,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const sendButton = document.getElementById('sendButton');
     const chatbotBody = document.getElementById('chatbotBody');
     
+    // Lưu trữ lịch sử hội thoại
+    let chatHistory = [];
+    let sessionId = null;
+    
+    // Tạo hoặc lấy session ID
+    function getSessionId() {
+        if (sessionId) return sessionId;
+        
+        // Kiểm tra nếu đã có trong localStorage
+        let storedId = localStorage.getItem('chatbot_session_id');
+        if (storedId) {
+            sessionId = storedId;
+            return sessionId;
+        }
+        
+        // Tạo mới nếu chưa có
+        sessionId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('chatbot_session_id', sessionId);
+        return sessionId;
+    }
+    
     // Hiển thị/ẩn chatbot
     chatbotIcon.addEventListener('click', function() {
         chatbotBox.classList.toggle('active');
@@ -257,42 +278,92 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Xử lý gửi tin nhắn
     function sendMessage() {
-    const message = chatbotInput.value.trim();
-    if (message === '') return;
+        const message = chatbotInput.value.trim();
+        if (message === '') return;
 
-    // Hiển thị tin nhắn người dùng
-    addMessage(message, 'user');
-    chatbotInput.value = '';
+        // Hiển thị tin nhắn người dùng
+        addMessage(message, 'user');
+        chatbotInput.value = '';
 
-    // Hiển thị đang nhập
-    showTypingIndicator();
+        // Hiển thị đang nhập
+        showTypingIndicator();
+        
+        // Lưu tin nhắn người dùng vào lịch sử
+        chatHistory.push({
+            role: 'user',
+            content: message
+        });
 
-    // Gửi tin nhắn đến API AI
-    fetch('api/chatbot_ai.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: message })
-    })
-    .then(response => response.json())
-    .then(data => {
-        removeTypingIndicator();
-        // Chỉ sử dụng phản hồi từ API nếu có
-        if (data && data.response) {
-            addMessage(data.response, 'bot');
-        } else {
-            // Fallback tối thiểu
-            addMessage('Xin lỗi, tôi chưa hiểu rõ câu hỏi. Bạn có thể hỏi cụ thể hơn hoặc liên hệ hỗ trợ qua contact@bookswap.vn.', 'bot');
-        }
-    })
-    .catch(error => {
-        removeTypingIndicator();
-        console.error('Error:', error);
-        // Fallback tối thiểu khi lỗi mạng
-        addMessage('Có lỗi kết nối. Vui lòng thử lại hoặc liên hệ hỗ trợ qua contact@bookswap.vn.', 'bot');
-    });
-}
+        // Gửi tin nhắn đến API AI
+        fetch('api/chatbot_ai.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: message,
+                session_id: getSessionId(),
+                history: chatHistory.slice(-10) // Chỉ gửi 10 tin nhắn gần nhất để tối ưu
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            removeTypingIndicator();
+            
+            // Sử dụng phản hồi từ API
+            let botResponse = '';
+            if (data && data.response) {
+                botResponse = data.response;
+                
+                // Cập nhật session ID nếu có
+                if (data.session_id) {
+                    sessionId = data.session_id;
+                    localStorage.setItem('chatbot_session_id', sessionId);
+                }
+                
+                // Lưu tin nhắn bot vào lịch sử
+                chatHistory.push({
+                    role: 'assistant',
+                    content: botResponse
+                });
+            } else {
+                // Fallback
+                botResponse = 'Xin lỗi, tôi chưa hiểu rõ câu hỏi. Bạn có thể hỏi cụ thể hơn hoặc liên hệ hỗ trợ qua contact@bookswap.vn.';
+            }
+            
+            // Hiển thị tin nhắn bot
+            addMessage(botResponse, 'bot');
+            
+            // Lưu hội thoại vào cơ sở dữ liệu
+            saveConversation(message, botResponse);
+        })
+        .catch(error => {
+            removeTypingIndicator();
+            console.error('Error:', error);
+            // Fallback khi lỗi mạng
+            const fallbackResponse = 'Có lỗi kết nối. Vui lòng thử lại hoặc liên hệ hỗ trợ qua contact@bookswap.vn.';
+            addMessage(fallbackResponse, 'bot');
+        });
+    }
+    
+    // Lưu hội thoại vào cơ sở dữ liệu
+    function saveConversation(userMessage, botResponse) {
+        fetch('api/save_chat.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_message: userMessage,
+                bot_response: botResponse,
+                session_id: getSessionId()
+            })
+        })
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Error saving conversation:', error);
+        });
+    }
     
     // Thêm tin nhắn vào chatbox
     function addMessage(message, sender) {
@@ -334,84 +405,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Xử lý câu trả lời cơ bản (khi không kết nối được AI)
-    function getBotResponse(message) {
-        message = message.toLowerCase();
-        
-        // Dựa trên từ khóa để trả lời
-        if (message.includes('xin chào') || message.includes('hello') || message.includes('hi')) {
-            return 'Xin chào! Tôi có thể giúp gì cho bạn?';
-        } else if (message.includes('cách trao đổi') || message.includes('trao đổi sách')) {
-            return `
-                Để trao đổi sách, bạn cần thực hiện các bước sau:
-                <ol>
-                    <li>Đăng nhập vào tài khoản của bạn</li>
-                    <li>Tìm sách bạn muốn trao đổi</li>
-                    <li>Nhấn nút "Yêu cầu trao đổi" và chọn sách của bạn</li>
-                    <li>Viết lời nhắn cho chủ sách và gửi yêu cầu</li>
-                    <li>Đợi phản hồi từ chủ sách</li>
-                </ol>
-                Bạn có thể xem hướng dẫn chi tiết tại <a href="pages/how_it_works.php" style="color: #00a884;">đây</a>.
-            `;
-        } else if (message.includes('đăng sách') || message.includes('thêm sách')) {
-            return `
-                Để đăng sách mới:
-                <ol>
-                    <li>Đăng nhập vào tài khoản của bạn</li>
-                    <li>Nhấn vào "Đăng sách của bạn" ở trang chủ</li>
-                    <li>Điền đầy đủ thông tin sách và tải lên hình ảnh</li>
-                    <li>Nhấn "Đăng sách" để hoàn tất</li>
-                </ol>
-                Lưu ý: Sau khi đăng, sách sẽ được kiểm duyệt trước khi hiển thị công khai.
-            `;
-        } else if (message.includes('tìm sách') || message.includes('tìm kiếm')) {
-            return `
-                Bạn có thể tìm kiếm sách bằng nhiều cách:
-                <ul>
-                    <li>Sử dụng thanh tìm kiếm ở đầu trang</li>
-                    <li>Duyệt qua danh mục sách</li>
-                    <li>Xem các sách mới nhất hoặc phổ biến trên trang chủ</li>
-                </ul>
-                Bạn có thể lọc kết quả theo danh mục, tình trạng sách và hình thức trao đổi.
-            `;
-        } else if (message.includes('chính sách') || message.includes('điều khoản')) {
-            return `
-                BookSwap có các chính sách sau:
-                <ul>
-                    <li>Người dùng chịu trách nhiệm về tình trạng sách đăng tải</li>
-                    <li>Chúng tôi không can thiệp vào quá trình giao dịch giữa các bên</li>
-                    <li>Sách phải đúng với mô tả và hình ảnh</li>
-                    <li>Không đăng sách có nội dung vi phạm pháp luật</li>
-                </ul>
-                Vui lòng xem đầy đủ <a href="#" style="color: #00a884;">Điều khoản sử dụng</a> để biết thêm chi tiết.
-            `;
-        } else if (message.includes('nhức đầu') || message.includes('đau đầu')) {
-            return `
-                Đối với triệu chứng nhức đầu, tôi khuyên bạn nên tham khảo ý kiến của bác sĩ hoặc dược sĩ để được tư vấn loại thuốc phù hợp. Nếu bạn cần thêm thông tin hoặc hỗ trợ, tôi luôn sẵn sàng giúp đỡ!
-            `;
-        } else if (message.includes('liên hệ') || message.includes('hỗ trợ')) {
-            return `
-                Bạn có thể liên hệ với đội ngũ hỗ trợ của BookSwap qua:
-                <ul>
-                    <li>Email: contact@bookswap.vn</li>
-                    <li>Điện thoại: 028 1234 5678</li>
-                    <li>Trang <a href="pages/contact.php" style="color: #00a884;">Liên hệ</a></li>
-                </ul>
-                Chúng tôi sẽ phản hồi trong vòng 24 giờ làm việc.
-            `;
-        } else {
-            return `
-                Tôi chưa hiểu câu hỏi của bạn. Vui lòng thử diễn đạt theo cách khác hoặc chọn một trong những chủ đề sau:
-                <ul>
-                    <li>Cách trao đổi sách</li>
-                    <li>Tìm kiếm sách</li>
-                    <li>Đăng sách mới</li>
-                    <li>Chính sách trao đổi</li>
-                </ul>
-            `;
-        }
-    }
-    
     // Xử lý sự kiện click vào nút gửi
     sendButton.addEventListener('click', sendMessage);
     
@@ -421,5 +414,8 @@ document.addEventListener('DOMContentLoaded', function() {
             sendMessage();
         }
     });
+    
+    // Khởi tạo session ID khi tải trang
+    getSessionId();
 });
 </script>

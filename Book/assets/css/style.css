@@ -154,6 +154,9 @@ header .nav-link:hover {
 /* Footer */
 footer {
     background-color: #f8f9fa;
+    flex-shrink: 0;
+    width: 100%;
+    margin-top: auto;
 }
 
 footer h5 {
@@ -169,6 +172,17 @@ footer a {
 footer a:hover {
     color: var(--secondary-color);
 }
+
+footer, .footer-section {
+    position: relative;
+    margin-top: auto;
+  }
+  
+  #main-wrapper {
+    min-height: calc(100vh - 100px); /* Điều chỉnh giá trị 100px tùy theo chiều cao của header */
+    display: flex;
+    flex-direction: column;
+  }
 
 /* Newsletter Section */
 .newsletter-section {

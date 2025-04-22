@@ -1,7 +1,9 @@
 <?php
+// Book/api/chatbot_ai.php
+
 // Bật hiển thị lỗi (chỉ dùng trong môi trường phát triển)
- error_reporting(E_ALL);
- ini_set('display_errors', 1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Kiểm tra method
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -22,31 +24,76 @@ if (!isset($input['message']) || empty($input['message'])) {
 
 $message = $input['message'];
 
-// Thay API_KEY bằng API key của bạn
-$api_key = '';
+// Tạo session ID nếu chưa có
+$session_id = isset($input['session_id']) ? $input['session_id'] : session_id();
 
-// Gọi API Claude của Anthropic
-function callClaudeApi($message, $api_key) {
-    $url = 'https://api.anthropic.com/v1/messages';
+// Lấy lịch sử trò chuyện nếu có
+$conversation_history = [];
+if (isset($input['history']) && is_array($input['history'])) {
+    $conversation_history = $input['history'];
+}
+
+// Thay API key của Gemini vào đây
+$api_key = 'AIzaSyAawbm9mEDrTfG1fj3ZSMDR15jxeZexSJY'; 
+
+// Gọi API Gemini
+function callGeminiApi($message, $api_key, $conversation_history = []) {
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent?key=$api_key";
     
+    // Chuẩn bị nội dung tin nhắn từ lịch sử
+    $contents = [];
+    
+    // Thêm lịch sử trò chuyện vào contents
+    foreach ($conversation_history as $item) {
+        if (isset($item['role']) && isset($item['content'])) {
+            // Chuyển đổi từ format Claude sang format Gemini
+            $role = ($item['role'] === 'assistant') ? 'model' : 'user';
+            $contents[] = [
+                'role' => $role,
+                'parts' => [
+                    ['text' => $item['content']]
+                ]
+            ];
+        }
+    }
+    
+    // Thêm tin nhắn hiện tại
+    $contents[] = [
+        'role' => 'user',
+        'parts' => [
+            ['text' => $message]
+        ]
+    ];
+    
+    // Chuẩn bị dữ liệu cho request
     $data = [
-        'model' => 'claude-3-5-haiku-20241022',
-        'messages' => [
-            ['role' => 'user', 'content' => $message]
+        'contents' => $contents,
+        'generationConfig' => [
+            'temperature' => 0.7,
+            'maxOutputTokens' => 800,
         ],
-        'system' => 'Bạn là BookSwap Assistant, một trợ lý thông minh trên nền tảng trao đổi và mua bán sách. Hãy trả lời ngắn gọn, thân thiện và hữu ích. 
-- Nếu người dùng hỏi về cách sử dụng BookSwap (tìm kiếm, đăng sách, trao đổi, chính sách), hãy cung cấp hướng dẫn rõ ràng liên quan đến BookSwap. 
-- Nếu người dùng hỏi về sách (ví dụ: gợi ý sách, thể loại sách), hãy đưa ra câu trả lời cụ thể, sáng tạo, và khuyến khích họ tìm sách trên BookSwap (ví dụ: "Bạn có thể tìm các sách này trên BookSwap bằng cách vào trang tìm kiếm!").
-- Nếu câu hỏi liên quan đến y tế, khuyên họ tham khảo ý kiến bác sĩ hoặc dược sĩ.
-- Nếu không chắc chắn, đưa ra gợi ý phù hợp hoặc đề xuất liên hệ hỗ trợ qua contact@bookswap.vn.',
-        'max_tokens' => 500,
-        'temperature' => 0.7,
+        'safetySettings' => [
+            [
+                'category' => 'HARM_CATEGORY_HARASSMENT',
+                'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
+            ],
+            [
+                'category' => 'HARM_CATEGORY_HATE_SPEECH',
+                'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
+            ],
+            [
+                'category' => 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+                'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
+            ],
+            [
+                'category' => 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                'threshold' => 'BLOCK_MEDIUM_AND_ABOVE'
+            ]
+        ]
     ];
     
     $headers = [
-        'Content-Type: application/json',
-        'x-api-key: ' . $api_key,
-        'anthropic-version: 2023-06-01'
+        'Content-Type: application/json'
     ];
     
     $ch = curl_init($url);
@@ -55,6 +102,8 @@ function callClaudeApi($message, $api_key) {
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); 
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
     
     $response = curl_exec($ch);
     $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -69,34 +118,49 @@ function callClaudeApi($message, $api_key) {
     curl_close($ch);
     
     $result = json_decode($response, true);
-    return isset($result['content'][0]['text']) ? $result['content'][0]['text'] : null;
+    
+    // Trích xuất phản hồi từ cấu trúc JSON của Gemini
+    if (isset($result['candidates'][0]['content']['parts'][0]['text'])) {
+        return $result['candidates'][0]['content']['parts'][0]['text'];
+    }
+    
+    return null;
 }
 
-// Thử gọi API Claude
+// Thử gọi API Gemini
 try {
-    $ai_response = callClaudeApi($message, $api_key);
+    $ai_response = callGeminiApi($message, $api_key, $conversation_history);
     
     // Nếu có phản hồi từ AI
     if ($ai_response) {
-        echo json_encode(['response' => $ai_response]);
+        echo json_encode([
+            'response' => $ai_response,
+            'session_id' => $session_id
+        ]);
         exit;
     }
     
     // Nếu không có phản hồi từ AI, sử dụng phản hồi đơn giản (fallback)
     $response = getSimpleResponse($message);
-    echo json_encode(['response' => $response]);
+    echo json_encode([
+        'response' => $response,
+        'session_id' => $session_id
+    ]);
     
 } catch (Exception $e) {
     error_log('Exception: ' . $e->getMessage());
     $response = getSimpleResponse($message);
-    echo json_encode(['response' => $response]);
+    echo json_encode([
+        'response' => $response,
+        'session_id' => $session_id
+    ]);
 }
 
 // Hàm phản hồi đơn giản (fallback) khi không kết nối được API
 function getSimpleResponse($message) {
     $message = strtolower($message);
     
-    // Từ khóa và phản hồi - tương tự như trong JavaScript của chatbot
+    // Từ khóa và phản hồi - giữ nguyên code cũ
     if (strpos($message, 'xin chào') !== false || strpos($message, 'hello') !== false || strpos($message, 'hi') !== false) {
         return 'Xin chào! Tôi có thể giúp gì cho bạn?';
     } else if (strpos($message, 'trao đổi sách') !== false) {
@@ -109,3 +173,4 @@ function getSimpleResponse($message) {
         return 'Tôi chưa hiểu câu hỏi của bạn. Vui lòng thử diễn đạt theo cách khác hoặc hỏi về cách trao đổi sách, đăng sách, hoặc chính sách của BookSwap.';
     }
 }
+?>

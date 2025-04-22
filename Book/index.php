@@ -2,7 +2,6 @@
 // Include header
 require_once 'includes/header.php';
 require_once 'classes/Category.php';
-require_once 'includes/footer.php';
 
 // Khởi tạo Book class
 $book = new Book();
