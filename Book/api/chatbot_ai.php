@@ -23,7 +23,7 @@ if (!isset($input['message']) || empty($input['message'])) {
 $message = $input['message'];
 
 // Thay API_KEY bằng API key của bạn
-$api_key = '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';
+$api_key = '';
 
 // Gọi API Claude của Anthropic
 function callClaudeApi($message, $api_key) {
