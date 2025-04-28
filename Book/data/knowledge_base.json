@@ -1,0 +1,52 @@
+[
+  {
+    "id": "book_exchange_process",
+    "keywords": ["trao đổi sách", "đổi sách", "cách trao đổi", "quy trình", "hướng dẫn trao đổi"],
+    "content": "Quy trình trao đổi sách trên BookSwap gồm 5 bước: (1) Tìm sách bạn muốn, (2) Nhấn 'Yêu cầu trao đổi', (3) Chọn sách bạn muốn đề xuất để trao đổi, (4) Đợi người đăng sách phản hồi, (5) Khi được chấp nhận, bạn và người đăng sách sẽ trao đổi thông tin liên lạc để gặp mặt trao đổi sách hoặc gửi qua bưu điện."
+  },
+  {
+    "id": "book_posting",
+    "keywords": ["đăng sách", "thêm sách", "đăng bán", "đăng mới", "post sách"],
+    "content": "Để đăng sách lên BookSwap, bạn cần: (1) Đăng nhập vào tài khoản, (2) Nhấn nút 'Đăng sách' ở menu chính, (3) Điền đầy đủ thông tin sách gồm tên, tác giả, tình trạng, mô tả, (4) Tải lên ít nhất 1 hình ảnh rõ nét, (5) Chọn danh mục phù hợp, (6) Nhấn 'Đăng sách'. Sách sẽ được quản trị viên duyệt trước khi xuất hiện công khai."
+  },
+  {
+    "id": "account_creation",
+    "keywords": ["đăng ký", "tạo tài khoản", "tài khoản mới", "register", "sign up"],
+    "content": "Để tạo tài khoản BookSwap, bạn cần: (1) Truy cập trang đăng ký, (2) Điền thông tin cá nhân gồm tên, email và mật khẩu, (3) Xác minh email thông qua liên kết được gửi tới hộp thư, (4) Hoàn thiện hồ sơ cá nhân với địa chỉ và số điện thoại để thuận tiện cho việc trao đổi sách sau này."
+  },
+  {
+    "id": "book_conditions",
+    "keywords": ["tình trạng sách", "quality", "condition", "chất lượng"],
+    "content": "BookSwap phân loại sách theo 5 tình trạng: (1) Mới - sách chưa đọc, còn nguyên seal, (2) Gần như mới - đã mở nhưng chưa có dấu hiệu sử dụng, (3) Tốt - có dấu hiệu sử dụng nhẹ, không hư hỏng, (4) Khá - có dấu hiệu sử dụng rõ ràng nhưng không ảnh hưởng nội dung, (5) Trung bình - có một số hư hỏng nhỏ nhưng vẫn đọc được. Sách không đạt tiêu chuẩn tối thiểu sẽ không được chấp nhận."
+  },
+  {
+    "id": "rating_system",
+    "keywords": ["đánh giá", "rating", "feedback", "review", "point"],
+    "content": "Hệ thống đánh giá trên BookSwap cho phép người dùng đánh giá nhau sau khi hoàn thành giao dịch trao đổi sách. Điểm đánh giá từ 1-5 sao dựa trên độ chính xác trong mô tả sách, thái độ giao tiếp, và độ tin cậy. Người dùng có điểm đánh giá cao sẽ được ưu tiên hiển thị trong kết quả tìm kiếm."
+  },
+  {
+    "id": "search_tips",
+    "keywords": ["tìm kiếm", "search", "tìm sách", "filter"],
+    "content": "Để tìm kiếm sách hiệu quả trên BookSwap, bạn có thể: (1) Sử dụng thanh tìm kiếm với từ khóa là tên sách hoặc tác giả, (2) Lọc kết quả theo danh mục, (3) Sắp xếp theo mức độ phổ biến hoặc mới nhất, (4) Sử dụng bộ lọc nâng cao để chọn tình trạng sách, khoảng cách địa lý, hoặc điểm đánh giá của người đăng."
+  },
+  {
+    "id": "dispute_resolution",
+    "keywords": ["tranh chấp", "khiếu nại", "complaint", "dispute", "không hài lòng", "lừa đảo"],
+    "content": "Khi có tranh chấp trong quá trình trao đổi sách, BookSwap có quy trình giải quyết: (1) Gửi khiếu nại qua trang 'Hỗ trợ', (2) Cung cấp đầy đủ thông tin và bằng chứng, (3) Đội ngũ hỗ trợ sẽ liên hệ cả hai bên trong vòng 48h, (4) Tùy theo mức độ, BookSwap có thể đưa ra cảnh báo, tạm khóa hoặc khóa vĩnh viễn tài khoản vi phạm."
+  },
+  {
+    "id": "book_categories",
+    "keywords": ["danh mục", "thể loại", "category", "loại sách"],
+    "content": "BookSwap có 12 danh mục sách chính: (1) Văn học, (2) Kinh tế - Kinh doanh, (3) Tâm lý - Kỹ năng sống, (4) Nuôi dạy con, (5) Sách thiếu nhi, (6) Tiểu sử - Hồi ký, (7) Khoa học - Công nghệ, (8) Lịch sử, (9) Tôn giáo - Tâm linh, (10) Giáo trình - Sách học, (11) Ngoại ngữ, (12) Khác. Mỗi danh mục đều có các danh mục con chi tiết hơn."
+  },
+  {
+    "id": "safety_tips",
+    "keywords": ["an toàn", "safety", "lừa đảo", "tips", "bảo mật", "secure"],
+    "content": "Lời khuyên để trao đổi sách an toàn trên BookSwap: (1) Luôn kiểm tra kỹ đánh giá và lịch sử của người dùng, (2) Ưu tiên giao dịch trực tiếp ở nơi công cộng, (3) Kiểm tra kỹ sách trước khi trao đổi, (4) Không chia sẻ thông tin cá nhân nhạy cảm, (5) Sử dụng tính năng chat trong ứng dụng thay vì liên lạc bên ngoài, (6) Báo cáo ngay các hành vi đáng ngờ cho đội ngũ BookSwap."
+  },
+  {
+    "id": "shipping_options",
+    "keywords": ["gửi sách", "ship", "shipping", "giao hàng", "bưu điện", "vận chuyển"],
+    "content": "BookSwap hỗ trợ hai phương thức trao đổi sách: (1) Gặp mặt trực tiếp - người dùng tự sắp xếp địa điểm và thời gian, (2) Gửi qua bưu điện - người dùng có thể sử dụng dịch vụ vận chuyển của đối tác (Vietnam Post, Giao Hàng Nhanh, Giao Hàng Tiết Kiệm) với chi phí do hai bên thỏa thuận. BookSwap không thu phí hoa hồng từ việc trao đổi sách."
+  }
+] 

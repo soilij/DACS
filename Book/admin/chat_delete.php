@@ -1,9 +1,5 @@
 <?php
-// admin/chat_delete.php
-
-// Include header and check admin permission
-
-
+session_start();
 require_once '../config/database.php';
 
 // Check if user is admin
@@ -12,26 +8,35 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== 1) {
     exit;
 }
 
-// Xử lý yêu cầu xóa
+// Check if the request is POST and ID is provided
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
     $id = intval($_POST['id']);
     
-    // Xóa cuộc trò chuyện từ database
-    $stmt = $conn->prepare("DELETE FROM chat_history WHERE id = ?");
+    // Prepare the delete query
+    $query = "DELETE FROM chat_history WHERE id = ?";
+    $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $id);
     
+    // Execute the query
     if ($stmt->execute()) {
-        // Thêm thông báo thành công
-        $_SESSION['success_message'] = "Đã xóa cuộc trò chuyện thành công.";
+        // Set a success message in session
+        $_SESSION['success_message'] = "Xóa cuộc trò chuyện thành công!";
+        
+        // Redirect to chat_history.php
+        header("Location: chat_history.php");
+        exit;
     } else {
-        // Thêm thông báo lỗi
-        $_SESSION['error_message'] = "Không thể xóa cuộc trò chuyện. Lỗi: " . $stmt->error;
+        // Set an error message in session
+        $_SESSION['error_message'] = "Có lỗi xảy ra khi xóa cuộc trò chuyện.";
+        
+        // Redirect to chat_history.php
+        header("Location: chat_history.php");
+        exit;
     }
-    
-    $stmt->close();
+} else {
+    // If no ID is provided, redirect back with an error
+    $_SESSION['error_message'] = "Không tìm thấy ID cuộc trò chuyện để xóa.";
+    header("Location: chat_history.php");
+    exit;
 }
-
-
-
-require_once '../includes/admin_footer.php';
 ?>

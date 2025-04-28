@@ -1,8 +1,7 @@
 <?php
 // admin/chat_history.php
-ob_start();
+session_start();
 // Include header and check admin permission
-require_once '../includes/header.php';
 require_once '../config/database.php';
 
 // Check if user is admin
@@ -70,11 +69,11 @@ $params[] = $offset;
 $params[] = $items_per_page;
 $types .= "ii";
 
-// Thay thế đoạn mã bind_param và execute bằng đoạn này
+// Execute queries
 try {
     $count_stmt = $conn->prepare($count_query);
     if (!empty($params) && !empty($types)) {
-        $count_types = substr($types, 0, -2); // Remove the 'ii' for LIMIT params
+        $count_types = substr($types, 0, -2);
         if (!empty($count_types) && count(array_slice($params, 0, -2)) > 0) {
             $count_stmt->bind_param($count_types, ...array_slice($params, 0, -2));
         }
@@ -95,7 +94,159 @@ if (!empty($params) && !empty($types)) {
 }
 $stmt->execute();
 $result = $stmt->get_result();
+// Admin header
+include('includes/header.php');
 ?>
+
+<style>
+/* Cải thiện giao diện tổng thể */
+.container-fluid {
+    padding: 30px;
+}
+
+h1.h3 {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+/* Tinh chỉnh card bộ lọc */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.card-header h6 {
+    color: #2c3e50;
+}
+
+/* Cải thiện bảng */
+.table {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* Tinh chỉnh nút "Xem thêm" */
+.btn-link.show-more {
+    color: #3498db;
+    font-size: 0.9rem;
+    padding: 0;
+}
+
+.btn-link.show-more:hover {
+    color: #2980b9;
+    text-decoration: none;
+}
+
+/* Tinh chỉnh nút hành động */
+.btn-sm {
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.btn-primary.view-detail {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.btn-primary.view-detail:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}
+
+.btn-danger.delete-chat {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+}
+
+.btn-danger.delete-chat:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+}
+
+/* Tinh chỉnh modal */
+.modal-content {
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background-color: #3498db;
+    color: #fff;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.modal-header .close {
+    color: #fff;
+    opacity: 0.8;
+}
+
+.modal-header .close:hover {
+    opacity: 1;
+}
+
+.card-header.bg-primary {
+    background-color: #3498db !important;
+}
+
+.card-header.bg-success {
+    background-color: #2ecc71 !important;
+}
+
+.modal-body .card {
+    margin-bottom: 15px;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+}
+
+/* Tinh chỉnh phân trang */
+.pagination .page-item.active .page-link {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.pagination .page-link {
+    color: #3498db;
+    border-radius: 5px;
+    margin: 0 3px;
+}
+
+.pagination .page-link:hover {
+    background-color: #f1f5f9;
+    color: #2980b9;
+}
+</style>
 
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Quản lý lịch sử trò chuyện chatbot</h1>
@@ -396,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-     // Xử lý nút đóng modal (nút X)
+    // Xử lý nút đóng modal (nút X)
     document.querySelector('#viewDetailModal .close').addEventListener('click', function() {
         $('#viewDetailModal').modal('hide');
     });
@@ -413,7 +564,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php
-// Include footer
-require_once '../includes/footer.php';
-?>
+<?php include('includes/footer.php'); ?>

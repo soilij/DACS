@@ -1,0 +1,13 @@
+# Bỏ qua file config chứa API keys
+config/api_keys.php
+
+# Bỏ qua các file và thư mục thường gặp
+vendor/
+node_modules/
+.env
+.env.local
+.env.*.local
+.phpunit.result.cache
+.DS_Store
+Thumbs.db
+*.log 
