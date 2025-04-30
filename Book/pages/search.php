@@ -29,6 +29,21 @@ $sort = isset($_GET['sort']) ? $_GET['sort'] : 'newest';
 // Lấy danh sách danh mục
 $categories = $category->getAll();
 
+// Xây dựng câu truy vấn cơ bản
+$sql = "
+    SELECT b.*, u.username, u.full_name, u.rating as seller_rating, 
+           COUNT(DISTINCT r.id) as review_count, AVG(r.rating) as avg_rating
+    FROM books b
+    LEFT JOIN users u ON b.user_id = u.id
+    LEFT JOIN reviews r ON b.id = r.book_id
+    WHERE b.is_sold = 0
+";
+
+// Thêm điều kiện tìm kiếm
+if (!empty($search_query)) {
+    $sql .= " AND (b.title LIKE ? OR b.author LIKE ? OR b.description LIKE ?)";
+}
+
 // Tìm kiếm sách
 if (!empty($search_query) || !empty($category_id) || !empty($condition) || !empty($exchange_type) || !empty($price_min) || !empty($price_max)) {
     $search_results = $book->search(

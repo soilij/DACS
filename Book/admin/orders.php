@@ -253,12 +253,11 @@ include('includes/header.php');
                     <label for="status" class="form-label">Trạng thái thanh toán</label>
                     <select class="form-select" id="status" name="status">
                         <option value="">Tất cả</option>
-                        <option value="pending" <?php echo $filter_status == 'pending' ? 'selected' : ''; ?>>Chờ thanh toán</option>
+                        <option value="pending" <?php echo $filter_status == 'pending' ? 'selected' : ''; ?>>Chờ xác nhận</option>
                         <option value="paid" <?php echo $filter_status == 'paid' ? 'selected' : ''; ?>>Đã thanh toán</option>
                         <option value="processing" <?php echo $filter_status == 'processing' ? 'selected' : ''; ?>>Đang xử lý</option>
                         <option value="completed" <?php echo $filter_status == 'completed' ? 'selected' : ''; ?>>Hoàn thành</option>
                         <option value="cancelled" <?php echo $filter_status == 'cancelled' ? 'selected' : ''; ?>>Đã hủy</option>
-                        <option value="failed" <?php echo $filter_status == 'failed' ? 'selected' : ''; ?>>Thất bại</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -442,7 +441,7 @@ include('includes/header.php');
                             </td>
                             <td>
                                 <?php if($order['status'] == 'pending'): ?>
-                                    <span class="badge bg-warning text-dark">Chờ thanh toán</span>
+                                    <span class="badge bg-warning text-dark">Chờ xác nhận</span>
                                 <?php elseif($order['status'] == 'paid'): ?>
                                     <span class="badge bg-success">Đã thanh toán</span>
                                 <?php elseif($order['status'] == 'processing'): ?>
@@ -451,8 +450,6 @@ include('includes/header.php');
                                     <span class="badge bg-success">Hoàn thành</span>
                                 <?php elseif($order['status'] == 'cancelled'): ?>
                                     <span class="badge bg-danger">Đã hủy</span>
-                                <?php else: ?>
-                                    <span class="badge bg-secondary">Thất bại</span>
                                 <?php endif; ?>
                             </td>
                             <td>
@@ -475,7 +472,7 @@ include('includes/header.php');
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="order_detail.php?id=<?php echo $order['transaction_code']; ?>">Chi tiết</a></li>
                                         <li><h6 class="dropdown-header">Trạng thái thanh toán</h6></li>
-                                        <li><a class="dropdown-item" href="?action=status&id=<?php echo $order['transaction_code']; ?>&status=pending">Chờ thanh toán</a></li>
+                                        <li><a class="dropdown-item" href="?action=status&id=<?php echo $order['transaction_code']; ?>&status=pending">Chờ xác nhận</a></li>
                                         <li><a class="dropdown-item" href="?action=status&id=<?php echo $order['transaction_code']; ?>&status=paid">Đã thanh toán</a></li>
                                         <li><a class="dropdown-item" href="?action=status&id=<?php echo $order['transaction_code']; ?>&status=processing">Đang xử lý</a></li>
                                         <li><a class="dropdown-item" href="?action=status&id=<?php echo $order['transaction_code']; ?>&status=completed">Hoàn thành</a></li>

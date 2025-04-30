@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $db->bind(3, $transaction_code);
         
         if ($db->execute()) {
-            // Thêm vào lịch sử cập nhật (giả sử có bảng payment_history)
+            // Thêm vào lịch sử cập nhật
             $db->query('
                 INSERT INTO payment_history (transaction_code, payment_status, shipping_status, note, updated_by)
                 VALUES (?, ?, ?, ?, ?)
@@ -97,20 +97,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->execute();
             
             // Tạo thông báo cho người mua
-            $notification_data = [
-                'user_id' => $order['user_id'],
-                'message' => 'Đơn hàng #' . $transaction_code . ' đã được cập nhật trạng thái.',
-                'link' => 'pages/payment_details.php?transaction_code=' . $transaction_code
-            ];
-            $notification->create($notification_data);
+            $notification_message = '';
+            switch ($new_status) {
+                case 'paid':
+                    $notification_message = 'Thanh toán của bạn đã được xác nhận cho đơn hàng #' . $transaction_code;
+                    break;
+                case 'processing':
+                    $notification_message = 'Đơn hàng #' . $transaction_code . ' đang được xử lý';
+                    break;
+                case 'completed':
+                    $notification_message = 'Đơn hàng #' . $transaction_code . ' đã hoàn thành';
+                    break;
+                case 'cancelled':
+                    $notification_message = 'Đơn hàng #' . $transaction_code . ' đã bị hủy';
+                    break;
+            }
+            
+            if (!empty($notification_message)) {
+                $notification_data = [
+                    'user_id' => $order['user_id'],
+                    'message' => $notification_message,
+                    'link' => 'pages/payment_details.php?transaction_code=' . $transaction_code
+                ];
+                $notification->create($notification_data);
+            }
             
             // Tạo thông báo cho người bán
-            $notification_data = [
+            $seller_notification = [
                 'user_id' => $order['seller_id'],
-                'message' => 'Đơn hàng #' . $transaction_code . ' đã được cập nhật trạng thái.',
+                'message' => 'Đơn hàng #' . $transaction_code . ' đã được cập nhật trạng thái thành ' . $new_status,
                 'link' => 'pages/seller_orders.php'
             ];
-            $notification->create($notification_data);
+            $notification->create($seller_notification);
             
             $message = 'Đã cập nhật trạng thái đơn hàng thành công!';
             $message_type = 'success';

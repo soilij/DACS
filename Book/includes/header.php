@@ -45,10 +45,10 @@ $database = new Database();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../assets/css/style.css' : 'assets/css/style.css'; ?>">
     
     <!-- Favicon -->
-    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../assets/images/favicon.ico' : 'assets/images/favicon.ico'; ?>" type="image/x-icon">
 </head>
 <body>
     <!-- Banner thông báo -->
@@ -77,23 +77,20 @@ $database = new Database();
                                 <span class="navbar-toggler-icon"></span>
                             </button>
                             <div class="collapse navbar-collapse" id="navbarMain">
-                            <ul class="navbar-nav me-auto">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../index.php' : 'index.php'; ?>">Trang chủ</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="<?php echo isset($is_detail_page) && $is_detail_page ? 'search.php' : 'pages/search.php'; ?>">Tìm sách</a>
-                                </li>
-                                <!-- <li class="nav-item">
-                                    <a class="nav-link" href="<?php echo isset($is_detail_page) && $is_detail_page ? 'categories.php' : 'pages/categories.php'; ?>">Danh mục</a>
-                                </li> -->
-                                <li class="nav-item">
-                                    <a class="nav-link" href="<?php echo isset($is_detail_page) && $is_detail_page ? 'how_it_works.php' : 'pages/how_it_works.php'; ?>">Cách thức hoạt động</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="<?php echo isset($is_detail_page) && $is_detail_page ? 'contact.php' : 'pages/contact.php'; ?>">Liên hệ</a>
-                                </li>
-                            </ul>
+                                <ul class="navbar-nav me-auto">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../index.php' : 'index.php'; ?>">Trang chủ</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/search.php' : 'pages/search.php'; ?>">Tìm sách</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/how_it_works.php' : 'pages/how_it_works.php'; ?>">Cách thức hoạt động</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/contact.php' : 'pages/contact.php'; ?>">Liên hệ</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </nav>
@@ -102,109 +99,115 @@ $database = new Database();
                 <!-- Search, User Actions -->
                 <div class="col-auto d-flex align-items-center">
                     <!-- Search Icon -->
-                    <a href="pages/search.php" class="me-3 text-dark">
+                    <a href="<?php echo isset($is_detail_page) && $is_detail_page ? 'search.php' : 'pages/search.php'; ?>" class="me-3 text-dark">
                         <i class="fas fa-search"></i>
                     </a>
                     
                     <?php if(isLoggedIn()): ?>
                         <!-- Notifications -->
-                                <div class="dropdown me-3">
-                                        <a class="text-dark position-relative" href="#" role="button" id="dropdownNotification" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-bell"></i>
-                                            <?php
-                                            // Đếm số thông báo chưa đọc
-                                            $notification = new Notification();
-                                            $count = $notification->countUnread($_SESSION['user_id']);
-                                            if($count > 0):
-                                            ?>
-                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                                <?php echo $count; ?>
-                                            </span>
-                                            <?php endif; ?>
-                                        </a>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownNotification">
-                                            <?php
-                                            $notifications = $notification->getRecent($_SESSION['user_id'], 5);
-                                            if(count($notifications) > 0):
-                                                foreach($notifications as $n):
-                                            ?>
-                                            <li>
-                                            <a class="dropdown-item notification-item <?php echo $n['is_read'] ? 'read' : 'unread'; ?>" 
-                                            href="<?php echo isset($is_detail_page) && $is_detail_page ? '../' . $n['link'] : $n['link']; ?>" 
-                                            data-notification-id="<?php echo $n['id']; ?>">
-                                                    <?php echo $n['message']; ?>
-                                                    <div class="small text-muted"><?php echo date('d/m/Y H:i', strtotime($n['created_at'])); ?></div>
-                                                </a>
-                                            </li>
-                                            <?php
-                                                endforeach;
-                                            else:
-                                            ?>
-                                            <li><a class="dropdown-item text-center" href="#">Không có thông báo</a></li>
-                                            <?php endif; ?>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item text-center" href="pages/notifications.php">Xem tất cả</a></li>
-                                        </ul>
-                                    </div>
+                        <div class="dropdown me-3">
+                            <a class="text-dark position-relative" href="#" role="button" id="dropdownNotification" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-bell"></i>
+                                <?php
+                                // Đếm số thông báo chưa đọc
+                                $notification = new Notification();
+                                $count = $notification->countUnread($_SESSION['user_id']);
+                                if($count > 0):
+                                ?>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    <?php echo $count; ?>
+                                </span>
+                                <?php endif; ?>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownNotification">
+                                <?php
+                                $notifications = $notification->getRecent($_SESSION['user_id'], 5);
+                                if(count($notifications) > 0):
+                                    foreach($notifications as $n):
+                                        // Xử lý đường dẫn thông báo
+                                        $notificationLink = $n['link'];
+                                        if (isset($is_detail_page) && $is_detail_page) {
+                                            // Nếu đang ở trang chi tiết, thêm '../' vào đầu đường dẫn
+                                            $notificationLink = '../' . $notificationLink;
+                                        }
+                                ?>
+                                <li>
+                                    <a class="dropdown-item notification-item <?php echo $n['is_read'] ? 'read' : 'unread'; ?>" 
+                                       href="<?php echo $notificationLink; ?>" 
+                                       data-notification-id="<?php echo $n['id']; ?>">
+                                        <?php echo $n['message']; ?>
+                                        <div class="small text-muted"><?php echo date('d/m/Y H:i', strtotime($n['created_at'])); ?></div>
+                                    </a>
+                                </li>
+                                <?php
+                                    endforeach;
+                                else:
+                                ?>
+                                <li><a class="dropdown-item text-center" href="#">Không có thông báo</a></li>
+                                <?php endif; ?>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-center" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/notifications.php' : 'pages/notifications.php'; ?>">Xem tất cả</a></li>
+                            </ul>
+                        </div>
 
-                                    <script>
-                                    document.addEventListener('DOMContentLoaded', function() {
-                                        // Xử lý khi click vào thông báo
-                                        const notificationItems = document.querySelectorAll('.notification-item');
-                                        
-                                        notificationItems.forEach(item => {
-                                            item.addEventListener('click', function(e) {
-                                                const notificationId = this.dataset.notificationId;
-                                                const isUnread = this.classList.contains('unread');
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // Xử lý khi click vào thông báo
+                            const notificationItems = document.querySelectorAll('.notification-item');
+                            
+                            notificationItems.forEach(item => {
+                                item.addEventListener('click', function(e) {
+                                    const notificationId = this.dataset.notificationId;
+                                    const isUnread = this.classList.contains('unread');
+                                    
+                                    // Nếu là thông báo chưa đọc
+                                    if (isUnread) {
+                                        // Gửi AJAX để đánh dấu đã đọc
+                                        fetch('api/mark_notification_read.php', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded',
+                                            },
+                                            body: `notification_id=${notificationId}`
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.status === 'success') {
+                                                // Cập nhật giao diện
+                                                this.classList.remove('unread');
+                                                this.classList.add('read');
                                                 
-                                                // Nếu là thông báo chưa đọc
-                                                if (isUnread) {
-                                                    // Gửi AJAX để đánh dấu đã đọc
-                                                    fetch('api/mark_notification_read.php', {
-                                                        method: 'POST',
-                                                        headers: {
-                                                            'Content-Type': 'application/x-www-form-urlencoded',
-                                                        },
-                                                        body: `notification_id=${notificationId}`
-                                                    })
-                                                    .then(response => response.json())
-                                                    .then(data => {
-                                                        if (data.status === 'success') {
-                                                            // Cập nhật giao diện
-                                                            this.classList.remove('unread');
-                                                            this.classList.add('read');
-                                                            
-                                                            // Cập nhật số thông báo chưa đọc
-                                                            const badge = document.querySelector('.badge');
-                                                            if (badge) {
-                                                                const currentCount = parseInt(badge.textContent);
-                                                                if (currentCount > 1) {
-                                                                    badge.textContent = currentCount - 1;
-                                                                } else {
-                                                                    badge.remove();
-                                                                }
-                                                            }
-                                                        }
-                                                    })
-                                                    .catch(error => {
-                                                        console.error('Error:', error);
-                                                    });
+                                                // Cập nhật số thông báo chưa đọc
+                                                const badge = document.querySelector('.badge');
+                                                if (badge) {
+                                                    const currentCount = parseInt(badge.textContent);
+                                                    if (currentCount > 1) {
+                                                        badge.textContent = currentCount - 1;
+                                                    } else {
+                                                        badge.remove();
+                                                    }
                                                 }
-                                            });
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
                                         });
-                                    });
-                                    </script>
+                                    }
+                                });
+                            });
+                        });
+                        </script>
 
-        <style>
-        .notification-item.unread {
-            font-weight: bold;
-            background-color: #f8f9fa;
-        }
+                        <style>
+                        .notification-item.unread {
+                            font-weight: bold;
+                            background-color: #f8f9fa;
+                        }
 
-        .notification-item.read {
-            font-weight: normal;
-        }
-        </style>
+                        .notification-item.read {
+                            font-weight: normal;
+                        }
+                        </style>
                         
                         <!-- User Dropdown -->
                         <div class="dropdown">

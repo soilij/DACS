@@ -72,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'book_id' => $book_id,
                 'amount' => $book_info['price'],
                 'payment_method' => $payment_method,
+                'status' => 'pending', // Mặc định là pending cho tất cả phương thức
                 'shipping_info' => json_encode([
                     'fullname' => $fullname,
                     'email' => $email,

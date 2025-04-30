@@ -46,6 +46,9 @@ if ($payment_info['payment_method'] == 'cod' && $payment_info['status'] == 'pend
 // Lấy thông tin giao hàng
 $shipping_info = json_decode($payment_info['shipping_info'] ?? '{}', true);
 
+// Đặt biến $is_detail_page để header biết đang ở trang chi tiết
+$is_detail_page = true;
+
 // Include header
 require_once '../includes/header.php';
 ?>
@@ -64,13 +67,17 @@ require_once '../includes/header.php';
                     <p class="mb-2">Đơn hàng của bạn đã được tiếp nhận và đang được xử lý.</p>
                     <p class="mb-4">Mã đơn hàng: <strong><?php echo $transaction_code; ?></strong></p>
                     
-                    <?php if ($payment_info['payment_method'] == 'cod'): ?>
+                    <?php if ($payment_info['status'] == 'paid'): ?>
+                    <div class="alert alert-success d-inline-block mx-auto mb-4">
+                        <p class="mb-0">Đơn hàng của bạn đã được thanh toán thành công!</p>
+                    </div>
+                    <?php elseif ($payment_info['payment_method'] == 'cod'): ?>
                     <div class="alert alert-info d-inline-block mx-auto mb-4">
-                        <p class="mb-0">Bạn sẽ thanh toán khi nhận được sách.</p>
+                        <p class="mb-0">Đơn hàng của bạn đang chờ xác nhận. Bạn sẽ thanh toán khi nhận được sách.</p>
                     </div>
                     <?php else: ?>
-                    <div class="alert alert-success d-inline-block mx-auto mb-4">
-                        <p class="mb-0">Thanh toán của bạn đã được xác nhận.</p>
+                    <div class="alert alert-info d-inline-block mx-auto mb-4">
+                        <p class="mb-0">Đơn hàng của bạn đang chờ xác nhận thanh toán từ admin.</p>
                     </div>
                     <?php endif; ?>
                     

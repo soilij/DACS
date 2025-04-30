@@ -50,11 +50,11 @@ $shipping_info = json_decode($payment_info['shipping_info'] ?? '{}', true);
 // Xử lý khi nhấn nút đã thanh toán (chỉ áp dụng cho MoMo và chuyển khoản)
 if (isset($_POST['confirm_paid']) && in_array($payment_info['payment_method'], ['momo', 'bank_transfer'])) {
     // Cập nhật trạng thái thanh toán thành "đã thanh toán"
-    if ($payment->updatePaymentStatus($transaction_code, 'paid')) {
+    if ($payment->updatePaymentStatus($transaction_code, 'pending')) {
         // Gửi thông báo cho người bán
         $notification_data = [
             'user_id' => $book_info['user_id'],
-            'message' => 'Bạn có đơn hàng mới đã được thanh toán cho sách "' . $book_info['title'] . '"',
+            'message' => 'Bạn có đơn hàng mới đang chờ xác nhận thanh toán cho sách "' . $book_info['title'] . '"',
             'link' => 'pages/seller_orders.php'
         ];
         $notification->create($notification_data);
@@ -231,9 +231,11 @@ require_once '../includes/header.php';
                             </button>
                         </form>
                         <?php else: ?>
-                        <a href="payment_success.php?transaction_code=<?php echo $transaction_code; ?>" class="btn btn-primary">
-                            <i class="fas fa-check-circle me-2"></i> Xác nhận đơn hàng
-                        </a>
+                        <form method="post" action="">
+                            <button type="submit" name="confirm_cod" class="btn btn-primary">
+                                <i class="fas fa-check-circle me-2"></i> Xác nhận đặt hàng COD
+                            </button>
+                        </form>
                         <?php endif; ?>
                     </div>
                 </div>
