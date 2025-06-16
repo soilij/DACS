@@ -60,6 +60,11 @@ class User {
             return false;
         }
         
+        // KIỂM TRA KHÓA VĨNH VIỄN
+        if (isset($row['is_blocked']) && $row['is_blocked'] == 1) {
+            return 'blocked';
+        }
+        
         $hashed_password = $row['password'];
         error_log("Password verification: " . password_verify($password, $hashed_password));
         
@@ -433,5 +438,11 @@ class User {
         
         $result = $this->db->single();
         return $result['count'];
+    }
+    
+    public function getById($id) {
+        $this->db->query('SELECT * FROM users WHERE id = :id');
+        $this->db->bind(':id', $id);
+        return $this->db->single();
     }
 }

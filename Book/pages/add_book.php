@@ -28,6 +28,12 @@ $msg_type = '';
 // Lấy danh sách danh mục
 $categories = $category->getAll();
 
+$current_user = $user->getById($_SESSION['user_id']);
+if ($current_user['can_sell'] == 0) {
+    $msg = 'Tài khoản của bạn đã bị hạn chế quyền đăng bán/trao đổi sách. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.';
+    $msg_type = 'danger';
+}
+
 // Xử lý thêm sách
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Kiểm tra các trường bắt buộc
@@ -40,6 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($_POST['exchange_type'] !== 'exchange_only' && (empty($_POST['price']) || !is_numeric($_POST['price']) || $_POST['price'] <= 0)) {
         $msg = 'Vui lòng nhập giá hợp lệ!';
         $msg_type = 'danger';
+    } elseif ($current_user['can_sell'] == 0) {
+        // Không cho phép thêm sách
+        echo "Tài khoản của bạn đã bị hạn chế quyền đăng bán/trao đổi sách.";
+        exit();
     } else {
         // Xử lý upload ảnh
         $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
@@ -140,6 +150,7 @@ require_once '../includes/header.php';
                     </div>
                     <?php endif; ?>
                     
+                    <?php if ($current_user['can_sell'] != 0): ?>
                     <form method="post" enctype="multipart/form-data">
                         <div class="row mb-3">
                             <div class="col-md-6">
@@ -236,6 +247,7 @@ require_once '../includes/header.php';
                             <a href="../index.php" class="btn btn-outline-secondary">Hủy bỏ</a>
                         </div>
                     </form>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

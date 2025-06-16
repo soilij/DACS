@@ -61,11 +61,10 @@ class Category {
         return $this->db->execute();
     }
     
-    // Đếm số sách trong danh mục
+    // Đếm số sách đã duyệt trong danh mục
     public function countBooks($category_id) {
-        $this->db->query('SELECT COUNT(*) as count FROM books WHERE category_id = :category_id');
+        $this->db->query('SELECT COUNT(*) as count FROM books WHERE category_id = :category_id AND status = "available"');
         $this->db->bind(':category_id', $category_id);
-        
         $result = $this->db->single();
         return $result['count'];
     }

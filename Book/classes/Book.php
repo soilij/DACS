@@ -13,6 +13,7 @@ class Book {
             FROM books b
             LEFT JOIN categories c ON b.category_id = c.id
             JOIN users u ON b.user_id = u.id
+            WHERE u.is_blocked = 0 AND (u.suspended_until IS NULL OR u.suspended_until < NOW())
             ORDER BY b.created_at DESC
         ');
         
@@ -43,6 +44,8 @@ class Book {
             LEFT JOIN categories c ON b.category_id = c.id
             JOIN users u ON b.user_id = u.id
             WHERE b.status = "available"
+            AND u.is_blocked = 0 
+            AND (u.suspended_until IS NULL OR u.suspended_until < NOW())
             ORDER BY b.created_at DESC
             LIMIT :limit
         ');
@@ -305,6 +308,8 @@ class Book {
             LEFT JOIN categories c ON b.category_id = c.id
             JOIN users u ON b.user_id = u.id
             WHERE b.status = "available"
+            AND u.is_blocked = 0 
+            AND (u.suspended_until IS NULL OR u.suspended_until < NOW())
         ';
         
         // Sắp xếp kết quả
@@ -358,6 +363,8 @@ class Book {
             WHERE b.status = "available" 
             AND b.id != :book_id
             AND (b.category_id = :category_id)
+            AND u.is_blocked = 0 
+            AND (u.suspended_until IS NULL OR u.suspended_until < NOW())
             ORDER BY RAND()
             LIMIT :limit
         ');

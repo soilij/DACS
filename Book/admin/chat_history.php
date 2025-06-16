@@ -1,5 +1,10 @@
 <?php
 // admin/chat_history.php
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
+ini_set('session.cookie_secure', 1); // Nếu dùng HTTPS
+ini_set('session.gc_maxlifetime', 3600); // 1 giờ
+
 session_start();
 // Include header and check admin permission
 require_once '../config/database.php';

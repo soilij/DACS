@@ -42,7 +42,8 @@ $book_info = $book->getById($payment_info['book_id']);
 if ($payment_info['payment_method'] == 'cod' && $payment_info['status'] == 'pending') {
     $payment->updatePaymentStatus($transaction_code, 'processing');
 }
-
+// Cập nhật trạng thái sách thành đã bán/trao đổi
+$book->updateStatus($payment_info['book_id'], 'exchanged');
 // Lấy thông tin giao hàng
 $shipping_info = json_decode($payment_info['shipping_info'] ?? '{}', true);
 

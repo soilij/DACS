@@ -37,7 +37,7 @@
   {
     "id": "book_categories",
     "keywords": ["danh mục", "thể loại", "category", "loại sách"],
-    "content": "BookSwap có 12 danh mục sách chính: (1) Văn học, (2) Kinh tế - Kinh doanh, (3) Tâm lý - Kỹ năng sống, (4) Nuôi dạy con, (5) Sách thiếu nhi, (6) Tiểu sử - Hồi ký, (7) Khoa học - Công nghệ, (8) Lịch sử, (9) Tôn giáo - Tâm linh, (10) Giáo trình - Sách học, (11) Ngoại ngữ, (12) Khác. Mỗi danh mục đều có các danh mục con chi tiết hơn."
+    "content": "BookSwap có 16 danh mục sách chính: (1) Văn học, (2) Kinh tế, (3) Tâm lý - Kỹ năng sống, (4) Lịch sử, (5) Khoa học - Công nghệ, (6) Tiểu sử - Hồi ký, (7) Thiếu nhi, (8) Ngoại ngữ, (9) Giáo khoa - Tham khảo, (10) Thể thao - Sức khỏe, (11) Nghệ thuật - Âm nhạc, (12) Du lịch, (13) Tôn giáo - Tâm linh, (14) Nấu ăn - Ẩm thực, (15) Truyện tranh - Manga, (16) Tình cảm."
   },
   {
     "id": "safety_tips",
@@ -48,5 +48,15 @@
     "id": "shipping_options",
     "keywords": ["gửi sách", "ship", "shipping", "giao hàng", "bưu điện", "vận chuyển"],
     "content": "BookSwap hỗ trợ hai phương thức trao đổi sách: (1) Gặp mặt trực tiếp - người dùng tự sắp xếp địa điểm và thời gian, (2) Gửi qua bưu điện - người dùng có thể sử dụng dịch vụ vận chuyển của đối tác (Vietnam Post, Giao Hàng Nhanh, Giao Hàng Tiết Kiệm) với chi phí do hai bên thỏa thuận. BookSwap không thu phí hoa hồng từ việc trao đổi sách."
+  },
+  {
+    "id": "find_expensive_book",
+    "keywords": ["tìm sách đắt nhất", "sách đắt", "giá cao", "sách giá trị"],
+    "content": "Để tìm sách đắt nhất trên BookSwap, bạn có thể: (1) Sử dụng bộ lọc 'Khoảng giá', (2) Sắp xếp kết quả theo 'Giá tăng dần', (3) Lọc theo các danh mục chuyên ngành để tìm sách có giá trị cao hơn."
+  },
+  {
+    "id": "find_cheapest_book",
+    "keywords": ["tìm sách rẻ nhất", "sách rẻ", "giá thấp", "sách khuyến mãi"],
+    "content": "Để tìm sách rẻ nhất trên BookSwap, bạn có thể: (1) Lọc theo mức giá thấp (dưới 50.000đ), (2) Sắp xếp kết quả theo 'Giá giảm dần', (3) Lọc theo tình trạng sách 'Trung bình' hoặc 'Khá', (4) Tìm trong các danh mục thường có sách giá rẻ để tăng cơ hội tìm thấy sách phù hợp."
   }
 ] 

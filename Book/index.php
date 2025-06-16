@@ -131,6 +131,8 @@ $featured_categories = $category->getFeatured();
                     // Truy vấn tất cả danh mục từ cơ sở dữ liệu
                     $all_categories = $category->getAll();
                     foreach($all_categories as $cat): 
+                        $book_count = $category->countBooks($cat['id']);
+                        // if ($book_count == 0) continue;
                     ?>
                     <div class="category-item mx-2" style="min-width: 200px; flex: 0 0 auto;">
                         <a href="pages/search.php?category=<?php echo $cat['id']; ?>" class="text-decoration-none">
@@ -220,7 +222,7 @@ $featured_categories = $category->getFeatured();
 <section class="popular-books mb-5 bg-light py-5">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0 fw-bold">Lựa chọn phổ biến</h2>
+            <h2 class="mb-0 fw-bold">SẢN PHẨM KHÁC</h2>
             <a href="pages/search.php?sort=popular" class="btn btn-outline-primary rounded-pill">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
         </div>
         

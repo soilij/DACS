@@ -73,7 +73,7 @@ try {
                 throw new Exception('Không thể xác nhận đơn hàng ở trạng thái hiện tại!');
             }
 
-            // Cập nhật trạng thái đơn hàng
+             // Cập nhật trạng thái đơn hàng
             $db->query('UPDATE payments SET status = ?, updated_at = NOW() WHERE transaction_code = ?');
             $db->bind(1, 'processing');
             $db->bind(2, $transaction_code);
@@ -95,33 +95,31 @@ try {
             $_SESSION['success'] = 'Đã xác nhận đơn hàng thành công!';
             break;
 
-        case 'cancel':
-            // Hủy đơn hàng
-            if ($order['status'] != 'pending') {
-                throw new Exception('Không thể hủy đơn hàng ở trạng thái hiện tại!');
-            }
-
-            // Cập nhật trạng thái đơn hàng
-            $db->query('UPDATE payments SET status = ?, updated_at = NOW() WHERE transaction_code = ?');
-            $db->bind(1, 'cancelled');
-            $db->bind(2, $transaction_code);
-            $db->execute();
-
-            // Cập nhật trạng thái sách thành chưa bán
-            $db->query('UPDATE books SET is_sold = 0 WHERE id = ?');
-            $db->bind(1, $order['book_id']);
-            $db->execute();
-
-            // Gửi thông báo cho người mua
-            $notification_data = [
-                'user_id' => $order['user_id'],
-                'message' => 'Đơn hàng #' . $transaction_code . ' đã bị hủy',
-                'link' => 'pages/payment_details.php?id=' . $transaction_code
-            ];
-            $notification->create($notification_data);
-
-            $_SESSION['success'] = 'Đã hủy đơn hàng thành công!';
-            break;
+            case 'cancel':
+                // Hủy đơn hàng
+                if ($order['status'] != 'pending') {
+                    throw new Exception('Không thể hủy đơn hàng ở trạng thái hiện tại!');
+                }
+            
+                // Cập nhật trạng thái đơn hàng
+                $db->query('UPDATE payments SET status = ?, updated_at = NOW() WHERE transaction_code = ?');
+                $db->bind(1, 'cancelled');
+                $db->bind(2, $transaction_code);
+                $db->execute();
+            
+                // Cập nhật trạng thái sách thành available
+                $book->updateStatus($order['book_id'], 'available');
+            
+                // Gửi thông báo cho người mua
+                $notification_data = [
+                    'user_id' => $order['user_id'],
+                    'message' => 'Đơn hàng #' . $transaction_code . ' đã bị hủy',
+                    'link' => 'pages/payment_details.php?id=' . $transaction_code
+                ];
+                $notification->create($notification_data);
+            
+                $_SESSION['success'] = 'Đã hủy đơn hàng thành công!';
+                break;
 
         case 'ship':
             // Giao hàng

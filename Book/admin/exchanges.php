@@ -47,14 +47,14 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                     $notification_data = [
                         'user_id' => $exchange_info['requester_id'],
                         'message' => 'Giao dịch trao đổi sách đã được đánh dấu hoàn thành bởi admin.',
-                        'link' => 'pages/exchange_request.php?id=' . $exchange_id
+                        'link' => 'pages/exchange_requests.php?id=' . $exchange_id
                     ];
                     $notification->create($notification_data);
                     
                     $notification_data = [
                         'user_id' => $exchange_info['owner_id'],
                         'message' => 'Giao dịch trao đổi sách đã được đánh dấu hoàn thành bởi admin.',
-                        'link' => 'pages/exchange_request.php?id=' . $exchange_id
+                        'link' => 'pages/exchange_requests.php?id=' . $exchange_id
                     ];
                     $notification->create($notification_data);
                 } else {
@@ -73,14 +73,14 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                     $notification_data = [
                         'user_id' => $exchange_info['requester_id'],
                         'message' => 'Giao dịch trao đổi sách đã bị hủy bởi admin.',
-                        'link' => 'pages/exchange_request.php?id=' . $exchange_id
+                        'link' => 'pages/exchange_requests.php?id=' . $exchange_id
                     ];
                     $notification->create($notification_data);
                     
                     $notification_data = [
                         'user_id' => $exchange_info['owner_id'],
                         'message' => 'Giao dịch trao đổi sách đã bị hủy bởi admin.',
-                        'link' => 'pages/exchange_request.php?id=' . $exchange_id
+                        'link' => 'pages/exchange_requests.php?id=' . $exchange_id
                     ];
                     $notification->create($notification_data);
                 } else {

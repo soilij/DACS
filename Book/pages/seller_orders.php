@@ -1,7 +1,8 @@
 <?php
 // Khởi động session
 session_start();
-
+// Thiết lập biến
+$is_detail_page = true;
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login.php');

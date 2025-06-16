@@ -21,4 +21,3 @@ define('CHATBOT_MAX_TOKENS', 1000);
 // Cấu hình temperature
 define('CHATBOT_TEMPERATURE', 0.7);
 
-require_once 'config/chatbot_config.php'; 

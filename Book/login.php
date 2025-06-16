@@ -28,13 +28,16 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // Attempt to login
         $user = new User();
-        $logged_in_user = $user->login($username, $password);
+        $result = $user->login($username, $password);
         
-        if($logged_in_user) {
-            // Create session variables
-            $_SESSION['user_id'] = $logged_in_user['id'];
-            $_SESSION['username'] = $logged_in_user['username'];
-            $_SESSION['is_admin'] = $logged_in_user['is_admin'];
+        if ($result === 'blocked') {
+            $error = 'Tài khoản của bạn đã bị khóa vĩnh viễn. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.';
+            // Không cho đăng nhập, không tạo session
+        } elseif ($result) {
+            // Đăng nhập thành công, tạo session
+            $_SESSION['user_id'] = $result['id'];
+            $_SESSION['username'] = $result['username'];
+            $_SESSION['is_admin'] = $result['is_admin'];
             
             // Redirect to home page or requested page
             if(isset($_GET['redirect'])) {

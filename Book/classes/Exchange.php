@@ -48,7 +48,7 @@ class Exchange {
             $notification_data = [
                 'user_id' => $data['owner_id'],
                 'message' => 'Bạn có một yêu cầu trao đổi sách mới',
-                'link' => 'pages/exchange_request.php?id=' . $exchange_id
+                'link' => 'pages/exchange_requests.php?id=' . $exchange_id
             ];
             $notification->create($notification_data);
             
@@ -165,7 +165,7 @@ class Exchange {
             $notification_data = [
                 'user_id' => $notification_user_id,
                 'message' => $notification_message,
-                'link' => 'pages/exchange_request.php?id=' . $id
+                'link' => 'pages/exchange_requests.php?id=' . $id
             ];
             $notification->create($notification_data);
             
@@ -349,7 +349,7 @@ class Exchange {
             $notification_data = [
                 'user_id' => $request['owner_id'],
                 'message' => 'Yêu cầu trao đổi sách đã bị hủy',
-                'link' => 'pages/exchange_request.php?id=' . $id
+                'link' => 'pages/exchange_requests.php?id=' . $id
             ];
             $notification->create($notification_data);
             

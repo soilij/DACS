@@ -36,48 +36,69 @@ if (!$report_info) {
     header('Location: reports_list.php');
     exit();
 }
-if (isset($_POST['action']) && $_POST['action'] == 'unsuspend') {
-    $db = new Database();
-    $db->query('UPDATE users SET suspended_until = NULL WHERE id = :id');
-    $db->bind(':id', $report_info['reported_user_id']);
-    
-    if ($db->execute()) {
-        // Tạo thông báo cho người dùng
-        $notification = new Notification();
-        $notificationData = [
-            'user_id' => $report_info['reported_user_id'],
-            'message' => 'Tài khoản của bạn đã được mở khóa sớm hơn thời hạn ban đầu.',
-            'link' => 'pages/profile.php'
-        ];
-        $notification->create($notificationData);
-        
-        $message = 'Đã mở khóa tài khoản thành công!';
-        $message_type = 'success';
-        
-        // Refresh để hiển thị thông tin mới
-        header('Location: report_detail.php?id=' . $report_id . '&message=' . urlencode($message) . '&type=' . $message_type);
-        exit();
-    } else {
-        $message = 'Có lỗi xảy ra khi mở khóa tài khoản!';
-        $message_type = 'danger';
-    }
-}
-// Đánh dấu báo cáo là đã xem xét nếu đang ở trạng thái chờ xử lý
-if ($report_info['status'] == 'pending') {
-    $report->updateReportStatus($report_id, 'reviewed', $_SESSION['user_id']);
-    // Refresh để hiển thị trạng thái mới
-    header('Location: report_detail.php?id=' . $report_id);
-    exit();
-}
-
-// Xử lý hành động
-$message = '';
-$message_type = '';
 
 if (isset($_POST['action'])) {
     $action = $_POST['action'];
     $admin_note = isset($_POST['admin_note']) ? trim($_POST['admin_note']) : '';
-    
+
+    // Gỡ hạn chế mua
+    if ($action == 'unrestrict_buy') {
+        $db = new Database();
+        $db->query('UPDATE users SET can_buy = 1 WHERE id = :id');
+        $db->bind(':id', $report_info['reported_user_id']);
+        if ($db->execute()) {
+            // Tạo thông báo cho người dùng
+            $notification = new Notification();
+            $notification->create([
+                'user_id' => $report_info['reported_user_id'],
+                'message' => 'Tài khoản của bạn đã được mở lại quyền mua sách.',
+                'link' => 'pages/profile.php'
+            ]);
+            $message = 'Đã mở lại quyền mua sách cho người dùng!';
+            $message_type = 'success';
+            header('Location: report_detail.php?id=' . $report_id . '&message=' . urlencode($message) . '&type=' . $message_type);
+            exit();
+        }
+    }
+
+    // Gỡ hạn chế bán
+    if ($action == 'unrestrict_sell') {
+        $db = new Database();
+        $db->query('UPDATE users SET can_sell = 1 WHERE id = :id');
+        $db->bind(':id', $report_info['reported_user_id']);
+        if ($db->execute()) {
+            $notification = new Notification();
+            $notification->create([
+                'user_id' => $report_info['reported_user_id'],
+                'message' => 'Tài khoản của bạn đã được mở lại quyền bán/trao đổi sách.',
+                'link' => 'pages/profile.php'
+            ]);
+            $message = 'Đã mở lại quyền bán/trao đổi sách cho người dùng!';
+            $message_type = 'success';
+            header('Location: report_detail.php?id=' . $report_id . '&message=' . urlencode($message) . '&type=' . $message_type);
+            exit();
+        }
+    }
+
+    // Gỡ khóa vĩnh viễn
+    if ($action == 'unban') {
+        $db = new Database();
+        $db->query('UPDATE users SET is_blocked = 0 WHERE id = :id');
+        $db->bind(':id', $report_info['reported_user_id']);
+        if ($db->execute()) {
+            $notification = new Notification();
+            $notification->create([
+                'user_id' => $report_info['reported_user_id'],
+                'message' => 'Tài khoản của bạn đã được mở khóa vĩnh viễn.',
+                'link' => 'pages/profile.php'
+            ]);
+            $message = 'Đã mở khóa vĩnh viễn cho người dùng!';
+            $message_type = 'success';
+            header('Location: report_detail.php?id=' . $report_id . '&message=' . urlencode($message) . '&type=' . $message_type);
+            exit();
+        }
+    }
+
     if (empty($admin_note)) {
         $message = 'Vui lòng nhập ghi chú của quản trị viên!';
         $message_type = 'danger';
@@ -96,11 +117,23 @@ if (isset($_POST['action'])) {
     }
 }
 
+// Đánh dấu báo cáo là đã xem xét nếu đang ở trạng thái chờ xử lý
+if ($report_info['status'] == 'pending') {
+    $report->updateReportStatus($report_id, 'reviewed', $_SESSION['user_id']);
+    // Refresh để hiển thị trạng thái mới
+    header('Location: report_detail.php?id=' . $report_id);
+    exit();
+}
+
 // Hiển thị thông báo từ redirect
 if (isset($_GET['message']) && isset($_GET['type'])) {
     $message = $_GET['message'];
     $message_type = $_GET['type'];
 }
+
+// Đảm bảo biến luôn tồn tại
+if (!isset($message)) $message = '';
+if (!isset($message_type)) $message_type = '';
 
 // Lấy lại thông tin báo cáo mới nhất
 $report_info = $report->getReportById($report_id);
@@ -154,6 +187,11 @@ include('includes/header.php');
                             <p><strong>Trạng thái tài khoản:</strong>
                                 <?php if ($report_info['is_blocked']): ?>
                                     <span class="badge bg-danger">Đã khóa</span>
+                                    <form method="post" class="d-inline">
+                                        <button type="submit" name="action" value="unban" class="btn btn-sm btn-success ms-2" onclick="return confirm('Bạn có chắc chắn muốn mở khóa vĩnh viễn tài khoản này?');">
+                                            <i class="fas fa-unlock"></i> Gỡ khóa
+                                        </button>
+                                    </form>
                                 <?php elseif ($report_info['suspended_until'] && strtotime($report_info['suspended_until']) > time()): ?>
                                     <span class="badge bg-warning">Tạm khóa đến <?php echo date('d/m/Y H:i', strtotime($report_info['suspended_until'])); ?></span>
                                 <?php else: ?>
@@ -161,13 +199,23 @@ include('includes/header.php');
                                 <?php endif; ?>
                             </p>
                             <p><strong>Quyền mua bán:</strong>
-                                <?php if (!$report_info['can_buy'] && !$report_info['can_sell']): ?>
-                                    <span class="badge bg-danger">Không thể mua/bán</span>
-                                <?php elseif (!$report_info['can_buy']): ?>
+                                <?php if (!$report_info['can_buy']): ?>
                                     <span class="badge bg-warning">Không thể mua</span>
-                                <?php elseif (!$report_info['can_sell']): ?>
+                                    <form method="post" class="d-inline">
+                                        <button type="submit" name="action" value="unrestrict_buy" class="btn btn-sm btn-success ms-2">
+                                            <i class="fas fa-unlock"></i> Mở lại quyền mua
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+                                <?php if (!$report_info['can_sell']): ?>
                                     <span class="badge bg-warning">Không thể bán</span>
-                                <?php else: ?>
+                                    <form method="post" class="d-inline">
+                                        <button type="submit" name="action" value="unrestrict_sell" class="btn btn-sm btn-success ms-2">
+                                            <i class="fas fa-unlock"></i> Mở lại quyền bán
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+                                <?php if ($report_info['can_buy'] && $report_info['can_sell']): ?>
                                     <span class="badge bg-success">Đầy đủ quyền</span>
                                 <?php endif; ?>
                             </p>

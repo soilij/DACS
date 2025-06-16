@@ -14,6 +14,7 @@ require_once '../classes/Database.php';
 require_once '../classes/Book.php';
 require_once '../classes/Payment.php';
 require_once '../classes/User.php';
+require_once '../classes/MomoService.php';
 
 // Khởi tạo đối tượng
 $book = new Book();
@@ -38,9 +39,22 @@ if (!$book_info || $book_info['exchange_type'] == 'exchange_only') {
 // Xử lý thanh toán
 $msg = '';
 $msg_type = '';
+$is_detail_page = true;
 
 // Lấy thông tin người dùng hiện tại
 $current_user = $user->getUserById($_SESSION['user_id']);
+
+// Cấu hình MoMo với URL callback
+$momoConfig = [
+    'partnerCode' => 'MOMO',
+    'accessKey' => 'F8BBA842ECF85',
+    'secretKey' => 'K951B6PE1waDMi640xX08PD3vg6EkVlz',
+    'momoApiUrl' => 'https://test-payment.momo.vn/v2/gateway/api/create',
+    'returnUrl' => 'https://hutechwagk22.azdigi.shop/pages/momo_return.php',
+    'notifyUrl' => 'https://hutechwagk22.azdigi.shop/api/momo_notify.php',
+    'requestType' => 'captureWallet'
+];
+$momoService = new MomoService($momoConfig);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Kiểm tra các trường bắt buộc
@@ -70,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $payment_data = [
                 'user_id' => $_SESSION['user_id'],
                 'book_id' => $book_id,
-                'amount' => $book_info['price'],
+                'amount' => $book_info['price'] + 20000,
                 'payment_method' => $payment_method,
                 'status' => 'pending', // Mặc định là pending cho tất cả phương thức
                 'shipping_info' => json_encode([
@@ -87,9 +101,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $transaction_code = $payment->createPaymentRequest($payment_data);
             
             if ($transaction_code) {
-                // Chuyển hướng đến trang xác nhận thanh toán
-                header("Location: payment_confirm.php?transaction_code={$transaction_code}");
-                exit();
+                if ($payment_method == 'momo') {
+                    // Tạo mã đơn hàng và thông tin thanh toán MoMo
+                    $momoOrderId = 'BS-' . $transaction_code . '-' . time();
+                    $orderInfo = 'Thanh toán đơn hàng BookSwap: ' . $book_info['title'];
+                    
+                    // Lưu thông tin vào session
+                    $_SESSION['momo_payment'] = [
+                        'transaction_code' => $transaction_code,
+                        'book_id' => $book_id,
+                        'momo_order_id' => $momoOrderId
+                    ];
+                    
+                    // Tạo URL thanh toán và chuyển hướng
+                    $response = $momoService->createPaymentUrl(
+                        $momoOrderId,
+                        (int)$book_info['price'],
+                        $orderInfo
+                    );
+                    
+                    if (isset($response['payUrl'])) {
+                        header('Location: ' . $response['payUrl']);
+                        exit();
+                    } else {
+                        $msg = 'Không thể tạo URL thanh toán MoMo: ' . json_encode($response);
+                        $msg_type = 'danger';
+                    }
+                } else {
+                    // Chuyển hướng đến trang xác nhận thanh toán cho các phương thức khác
+                    header("Location: payment_confirm.php?transaction_code={$transaction_code}");
+                    exit();
+                }
             } else {
                 $msg = 'Có lỗi xảy ra khi tạo yêu cầu thanh toán!';
                 $msg_type = 'danger';

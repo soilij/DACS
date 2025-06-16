@@ -74,6 +74,9 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                             $notification->create($notification_data);
                         }
                     }
+                    // Chuyển hướng về trang orders.php
+                    // header('Location: orders.php?success=1');
+                    // exit();
                 } else {
                     $message = 'Có lỗi xảy ra khi cập nhật trạng thái!';
                     $message_type = 'danger';
@@ -117,30 +120,69 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
                             $notification->create($notification_data);
                         }
                     }
+                    // Chuyển hướng về trang orders.php
+                    header('Location: orders.php?success=1');
+                    exit();
                 } else {
                     $message = 'Có lỗi xảy ra khi cập nhật trạng thái vận chuyển!';
                     $message_type = 'danger';
                 }
             }
             break;
+         
+            case 'cancel':
+                // Hủy đơn hàng
+                if ($payment->updatePaymentStatus($transaction_code, 'cancelled')) {
+                    // Lấy thông tin đơn hàng để biết sách nào cần cập nhật
+                    $payment_info = $payment->getPaymentByTransactionCode($transaction_code);
+                    
+                    // Cập nhật trạng thái sách thành available
+                    $book->updateStatus($payment_info['book_id'], 'available');
+                    
+                    // Gửi thông báo cho người dùng
+                    $notification_data = [
+                        'user_id' => $payment_info['user_id'],
+                        'message' => 'Đơn hàng #' . $transaction_code . ' đã bị hủy.',
+                        'link' => 'pages/payment_details.php?transaction_code=' . $transaction_code
+                    ];
+                    $notification->create($notification_data);
+                    
+                    $message = 'Đã hủy đơn hàng thành công!';
+                    $message_type = 'success';
+                } else {
+                    $message = 'Có lỗi xảy ra khi hủy đơn hàng!';
+                    $message_type = 'danger';
+                }
+                break;
             
-        case 'delete':
-            // Xóa đơn hàng
-            $db->query('DELETE FROM payments WHERE transaction_code = :transaction_code');
-            $db->bind(':transaction_code', $transaction_code);
-            
-            if ($db->execute()) {
-                $message = 'Đã xóa đơn hàng thành công!';
-                $message_type = 'success';
-            } else {
-                $message = 'Có lỗi xảy ra khi xóa đơn hàng!';
-                $message_type = 'danger';
-            }
-            break;
-            
-        default:
-            // Không làm gì
-            break;
+                case 'delete':
+                    // Trước khi xóa đơn hàng, lấy thông tin sách cần cập nhật trạng thái
+                    $payment_info = $payment->getPaymentByTransactionCode($transaction_code);
+                    
+                    if (!$payment_info) {
+                        $message = 'Không tìm thấy thông tin đơn hàng!';
+                        $message_type = 'danger';
+                        break;
+                    }
+                    
+                    // Lưu book_id để sử dụng sau khi xóa đơn hàng
+                    $book_id = $payment_info['book_id'];
+                    
+                    // Xóa đơn hàng
+                    $db->query('DELETE FROM payments WHERE transaction_code = :transaction_code');
+                    $db->bind(':transaction_code', $transaction_code);
+                    
+                    if ($db->execute()) {
+                        // Cập nhật trạng thái sách thành available
+                        $book->updateStatus($book_id, 'available');
+                        
+                        $message = 'Đã xóa đơn hàng thành công và đặt lại trạng thái sách!';
+                        $message_type = 'success';
+                    } else {
+                        $message = 'Có lỗi xảy ra khi xóa đơn hàng!';
+                        $message_type = 'danger';
+                    }
+                    break;
     }
 }
 

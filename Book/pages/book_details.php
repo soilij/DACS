@@ -16,10 +16,24 @@ $user = new User();
 $exchange = new Exchange();
 $payment = new Payment(); // Khởi tạo đối tượng Payment
 
+// Sửa lỗi: kiểm tra tồn tại user_id trước khi lấy thông tin user
+$current_user = null;
+if (isset($_SESSION['user_id'])) {
+    $current_user = $user->getById($_SESSION['user_id']);
+}
+
 // Thiết lập biến
 $is_detail_page = true;
 $msg = '';
 $msg_type = '';
+
+// Sửa lỗi: kiểm tra $current_user trước khi truy cập thuộc tính
+if ($current_user && isset($current_user['can_buy']) && $current_user['can_buy'] == 0) {
+    // Hiện thông báo và không cho phép mua
+    $msg = 'Tài khoản của bạn đã bị hạn chế quyền mua sách. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.';
+    $msg_type = 'danger';
+    // Có thể ẩn nút mua hoặc không xử lý đơn hàng
+}
 
 // Kiểm tra ID sách
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -289,9 +303,13 @@ require_once '../includes/header.php';
                                 </button>
                                 
                                 <?php if($book_info['exchange_type'] != 'exchange_only'): ?>
+                                <?php if ($current_user['can_buy']): ?>
                                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#buyModal">
                                     <i class="fas fa-shopping-cart me-1"></i> Mua ngay
                                 </button>
+                                <?php else: ?>
+                                <button type="button" class="btn btn-secondary" disabled>Bạn bị hạn chế quyền mua</button>
+                                <?php endif; ?>
                                 <?php endif; ?>
                             </div>
                             <?php elseif($book_info['status'] != 'available'): ?>

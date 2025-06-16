@@ -162,8 +162,11 @@ $database = new Database();
                                     
                                     // Nếu là thông báo chưa đọc
                                     if (isUnread) {
+                                        // Xác định đường dẫn API dựa trên vị trí hiện tại
+                                        const apiPath = window.location.pathname.includes('/pages/') ? '../api/mark_notification_read.php' : 'api/mark_notification_read.php';
+                                        
                                         // Gửi AJAX để đánh dấu đã đọc
-                                        fetch('api/mark_notification_read.php', {
+                                        fetch(apiPath, {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -218,7 +221,9 @@ $database = new Database();
                                 <li><a class="dropdown-item" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/profile.php' : 'pages/profile.php'; ?>">Hồ sơ cá nhân</a></li>
                                 <li><a class="dropdown-item" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/my_books.php' : 'pages/my_books.php'; ?>">Sách của tôi</a></li>
                                 <li><a class="dropdown-item" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/exchange_requests.php' : 'pages/exchange_requests.php'; ?>">Yêu cầu trao đổi</a></li>
+                                <li><a class="dropdown-item" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/order_history.php' : 'pages/order_history.php'; ?>">Lịch sử đơn hàng</a></li>
                                 <li><a class="dropdown-item" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/wishlist.php' : 'pages/wishlist.php'; ?>">Danh sách yêu thích</a></li>
+                                <li><a class="dropdown-item" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../pages/seller_orders.php' : 'pages/seller_orders.php'; ?>">Đơn bán</a></li>
                                 <?php if(isAdmin()): ?>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="<?php echo isset($is_detail_page) && $is_detail_page ? '../admin/index.php' : 'admin/index.php'; ?>">Quản trị viên</a></li>
